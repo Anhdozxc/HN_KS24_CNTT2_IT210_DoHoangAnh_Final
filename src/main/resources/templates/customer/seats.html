@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Chon ghe</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container">
+    <h1 style="margin-bottom:4px;" th:text="${showtime.movie.title}"></h1>
+    <p style="color:#666;margin-bottom:20px;"
+       th:text="${showtime.room.name + ' | ' + #temporals.format(showtime.startTime, 'HH:mm dd/MM/yyyy') + ' | ' + #numbers.formatDecimal(showtime.price, 0, 'COMMA', 0, 'POINT') + ' VND/ghe'}">
+    </p>
+
+    <!-- Thong bao loi (ghe bi dat mat) -->
+    <div class="alert alert-error" th:if="${param.error}" th:text="${param.error}"></div>
+
+    <!-- Chu thich mau ghe -->
+    <div class="seat-legend">
+        <div class="legend-item">
+            <div class="legend-box" style="border:2px solid #0066cc;"></div> Con trong
+        </div>
+        <div class="legend-item">
+            <div class="legend-box" style="background:#0066cc;"></div> Dang chon
+        </div>
+        <div class="legend-item">
+            <div class="legend-box" style="background:#ccc;border:2px solid #999;"></div> Da dat
+        </div>
+    </div>
+
+    <!-- Man hinh chieu -->
+    <div class="screen" style="margin-top:16px;">--- MAN HINH ---</div>
+
+    <!-- So do ghe -->
+    <div class="seat-grid" id="seatGrid">
+        <!-- Nhom ghe theo hang (lay ky tu dau ten ghe: A1->A, B1->B...) -->
+        <!-- Dung Thymeleaf groupBy hoac xu ly theo index -->
+        <div th:each="seat : ${seats}" style="display:inline;">
+            <!-- Dat id la seat-{id} de JS xu ly -->
+            <span th:id="'seat-' + ${seat.id}"
+                  th:attr="data-id=${seat.id}, data-name=${seat.seatName}"
+                  th:classappend="${bookedSeatIds.contains(seat.id)} ? ' booked' : ''"
+                  class="seat"
+                  th:text="${seat.seatName}"
+                  onclick="toggleSeat(this)">
+            </span>
+        </div>
+    </div>
+
+    <!-- Form dat ve -->
+    <form method="post" action="/booking/create" id="bookingForm" style="margin-top:24px;">
+        <input type="hidden" name="showtimeId" th:value="${showtime.id}"/>
+        <!-- JS se them input seatIds[] vao day -->
+        <div id="selectedSeatsInput"></div>
+
+        <div class="booking-summary">
+            <div>Ghe da chon: <strong id="selectedNames">Chua chon</strong></div>
+            <div>So luong: <strong id="seatCount">0</strong> ghe</div>
+            <div class="total" id="totalPrice">Tong tien: 0 VND</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top:16px;padding:10px 30px;"
+                onclick="return validateSeats()">Xac nhan dat ve</button>
+        <a href="javascript:history.back()" class="btn btn-secondary" style="margin-left:10px;">Quay lai</a>
+    </form>
+</div>
+
+<script th:inline="javascript">
+    // Lay gia ve tu Thymeleaf truyen sang JS
+    const price = [[${showtime.price}]];
+    let selected = [];  // Mang chua id ghe dang chon
+
+    // Bat/tat chon ghe
+    function toggleSeat(el) {
+        if (el.classList.contains('booked')) return;  // Ghe da dat, khong cho chon
+
+        const id = el.dataset.id;
+        const name = el.dataset.name;
+
+        if (el.classList.contains('selected')) {
+            // Bo chon
+            el.classList.remove('selected');
+            selected = selected.filter(s => s.id !== id);
+        } else {
+            // Chon ghe
+            el.classList.add('selected');
+            selected.push({ id, name });
+        }
+        updateSummary();
+    }
+
+    // Cap nhat tong tien va danh sach ghe chon
+    function updateSummary() {
+        document.getElementById('seatCount').textContent = selected.length;
+        document.getElementById('selectedNames').textContent =
+            selected.length > 0 ? selected.map(s => s.name).join(', ') : 'Chua chon';
+
+        const total = selected.length * price;
+        document.getElementById('totalPrice').textContent =
+            'Tong tien: ' + total.toLocaleString('vi-VN') + ' VND';
+
+        // Xoa input cu, them moi vao form
+        const container = document.getElementById('selectedSeatsInput');
+        container.innerHTML = '';
+        selected.forEach(s => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'seatIds';
+            input.value = s.id;
+            container.appendChild(input);
+        });
+    }
+
+    // Kiem tra truoc khi submit
+    function validateSeats() {
+        if (selected.length === 0) {
+            alert('Vui long chon it nhat 1 ghe!');
+            return false;
+        }
+        return true;
+    }
+</script>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

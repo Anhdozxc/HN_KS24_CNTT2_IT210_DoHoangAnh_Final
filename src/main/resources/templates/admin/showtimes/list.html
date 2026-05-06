@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Quan ly suat chieu</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container">
+    <div class="page-header">
+        <h1>Danh sach suat chieu</h1>
+        <a href="/admin/showtimes/new" class="btn btn-primary">+ Them suat chieu</a>
+    </div>
+
+    <div class="alert alert-success" th:if="${param.success}">Thao tac thanh cong!</div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Phim</th>
+                <th>Phong</th>
+                <th>Gio bat dau</th>
+                <th>Gio ket thuc</th>
+                <th>Gia ve</th>
+                <th>Hanh dong</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="s : ${showtimes}">
+                <td th:text="${s.id}"></td>
+                <td th:text="${s.movie.title}"></td>
+                <td th:text="${s.room.name}"></td>
+                <!-- #temporals: format LocalDateTime trong Thymeleaf -->
+                <td th:text="${#temporals.format(s.startTime, 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:text="${#temporals.format(s.endTime, 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:text="${#numbers.formatDecimal(s.price, 0, 'COMMA', 0, 'POINT') + ' VND'}"></td>
+                <td>
+                    <form th:action="@{/admin/showtimes/delete/{id}(id=${s.id})}"
+                          method="post" style="display:inline;"
+                          onsubmit="return confirm('Xoa suat chieu nay?')">
+                        <button type="submit" class="btn btn-danger" style="padding:4px 10px;font-size:0.85rem;">Xoa</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(showtimes)}">
+                <td colspan="7" style="text-align:center;color:#aaa;">Chua co suat chieu nao</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

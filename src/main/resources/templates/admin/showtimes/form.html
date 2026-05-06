@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Them suat chieu</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container">
+    <div class="page-header">
+        <h1>Tao suat chieu moi</h1>
+        <a href="/admin/showtimes" class="btn btn-secondary">Quay lai</a>
+    </div>
+
+    <!-- Hien loi xung dot phong -->
+    <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+
+    <form method="post" action="/admin/showtimes/save"
+          th:object="${dto}"
+          style="background:#fff;padding:24px;border-radius:8px;max-width:500px;box-shadow:0 2px 8px rgba(0,0,0,.08);">
+
+        <div class="form-group">
+            <label>Phim *</label>
+            <select th:field="*{movieId}">
+                <option value="">-- Chon phim --</option>
+                <option th:each="m : ${movies}"
+                        th:value="${m.id}"
+                        th:text="${m.title + ' (' + m.duration + ' phut)'}"></option>
+            </select>
+            <span class="error-msg" th:if="${#fields.hasErrors('movieId')}" th:errors="*{movieId}"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Phong chieu *</label>
+            <select th:field="*{roomId}">
+                <option value="">-- Chon phong --</option>
+                <option th:each="r : ${rooms}"
+                        th:value="${r.id}"
+                        th:text="${r.name + ' (' + r.totalSeats + ' ghe)'}"></option>
+            </select>
+            <span class="error-msg" th:if="${#fields.hasErrors('roomId')}" th:errors="*{roomId}"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Gio bat dau *</label>
+            <!-- datetime-local: input chon ngay gio tren trinh duyet -->
+            <input type="datetime-local" th:field="*{startTime}"/>
+            <span class="error-msg" th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Gia ve (VND) *</label>
+            <input type="number" th:field="*{price}" min="0" step="1000"/>
+            <span class="error-msg" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
+        </div>
+
+        <p style="font-size:0.85rem;color:#666;margin-bottom:14px;">
+            Luu y: Gio ket thuc = Gio bat dau + Thoi luong phim + 15 phut don phong.
+            He thong tu dong kiem tra xung dot phong.
+        </p>
+
+        <button type="submit" class="btn btn-primary">Tao suat chieu</button>
+    </form>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

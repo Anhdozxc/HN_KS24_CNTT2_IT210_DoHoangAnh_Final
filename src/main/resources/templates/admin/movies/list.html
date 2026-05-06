@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Quan ly phim</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container">
+    <div class="page-header">
+        <h1>Danh sach phim</h1>
+        <a href="/admin/movies/new" class="btn btn-primary">+ Them phim moi</a>
+    </div>
+
+    <div class="alert alert-success" th:if="${param.success}">Thao tac thanh cong!</div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Poster</th>
+                <th>Ten phim</th>
+                <th>The loai</th>
+                <th>Thoi luong</th>
+                <th>Trang thai</th>
+                <th>Hanh dong</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- th:each: lap danh sach phim -->
+            <tr th:each="movie : ${movies}">
+                <td th:text="${movie.id}"></td>
+                <td>
+                    <!-- Hien anh poster neu co, neu khong hien chu "No image" -->
+                    <img th:if="${movie.posterUrl != null}"
+                         th:src="${movie.posterUrl}"
+                         style="width:50px;height:70px;object-fit:cover;border-radius:3px;"/>
+                    <span th:if="${movie.posterUrl == null}" style="color:#aaa;">No image</span>
+                </td>
+                <td th:text="${movie.title}"></td>
+                <td th:text="${movie.genre != null ? movie.genre.name : '-'}"></td>
+                <td th:text="${movie.duration + ' phut'}"></td>
+                <td>
+                    <span class="badge badge-confirmed" th:if="${movie.active}">Hien</span>
+                    <span class="badge badge-cancelled" th:if="${!movie.active}">An</span>
+                </td>
+                <td>
+                    <a th:href="@{/admin/movies/edit/{id}(id=${movie.id})}" class="btn btn-secondary" style="padding:4px 10px;font-size:0.85rem;">Sua</a>
+                    <!-- Form POST de xoa (khong dung link GET cho thao tac xoa) -->
+                    <form th:action="@{/admin/movies/delete/{id}(id=${movie.id})}"
+                          method="post" style="display:inline;"
+                          onsubmit="return confirm('An phim nay khoi danh sach?')">
+                        <button type="submit" class="btn btn-danger" style="padding:4px 10px;font-size:0.85rem;">An</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(movies)}">
+                <td colspan="7" style="text-align:center;color:#aaa;">Chua co phim nao</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

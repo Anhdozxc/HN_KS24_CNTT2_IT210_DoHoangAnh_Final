@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Form Phim</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container">
+    <div class="page-header">
+        <!-- Neu dto.id != null -> dang sua, nguoc lai -> dang tao moi -->
+        <h1 th:text="${dto.id != null ? 'Sua phim' : 'Them phim moi'}">Form Phim</h1>
+        <a href="/admin/movies" class="btn btn-secondary">Quay lai</a>
+    </div>
+
+    <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+
+    <!-- enctype multipart/form-data de upload file anh -->
+    <form method="post" action="/admin/movies/save"
+          enctype="multipart/form-data"
+          th:object="${dto}"
+          style="background:#fff;padding:24px;border-radius:8px;max-width:600px;box-shadow:0 2px 8px rgba(0,0,0,.08);">
+
+        <!-- Field an: truyen id khi sua -->
+        <input type="hidden" th:field="*{id}"/>
+
+        <div class="form-group">
+            <label>Ten phim *</label>
+            <input type="text" th:field="*{title}"/>
+            <span class="error-msg" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Mo ta</label>
+            <textarea th:field="*{description}"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Thoi luong (phut) *</label>
+            <input type="number" th:field="*{duration}" min="1"/>
+            <span class="error-msg" th:if="${#fields.hasErrors('duration')}" th:errors="*{duration}"></span>
+        </div>
+
+        <div class="form-group">
+            <label>The loai *</label>
+            <select th:field="*{genreId}">
+                <option value="">-- Chon the loai --</option>
+                <!-- Vong lap render option, selected tu dong theo genreId -->
+                <option th:each="g : ${genres}"
+                        th:value="${g.id}"
+                        th:text="${g.name}"></option>
+            </select>
+            <span class="error-msg" th:if="${#fields.hasErrors('genreId')}" th:errors="*{genreId}"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Ngay phat hanh</label>
+            <input type="date" th:field="*{releaseDate}"/>
+        </div>
+
+        <div class="form-group">
+            <label>Poster (anh phim)</label>
+            <!-- Hien anh cu neu dang sua -->
+            <div th:if="${movie != null and movie.posterUrl != null}" style="margin-bottom:8px;">
+                <img th:src="${movie.posterUrl}" style="width:80px;height:110px;object-fit:cover;border-radius:4px;"/>
+                <p style="font-size:0.8rem;color:#666;margin-top:4px;">Anh hien tai. Chon anh moi de thay the.</p>
+            </div>
+            <!-- name="posterFile" phai khop voi ten field trong MovieDTO -->
+            <input type="file" name="posterFile" accept="image/*"/>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Luu</button>
+    </form>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

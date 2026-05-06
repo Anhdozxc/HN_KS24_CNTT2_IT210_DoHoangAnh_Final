@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- th:text de dat tieu de dong theo trang -->
+    <title th:text="${pageTitle != null ? pageTitle + ' - Cinema' : 'Cinema Booking'}">Cinema</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+
+<!-- THANH DIEU HUONG (dung th:fragment de nhuc vao trang khac) -->
+<nav th:fragment="navbar">
+    <div class="navbar">
+        <a href="/" class="logo">CinemaBooking</a>
+
+        <div class="nav-links">
+            <!-- Hien link theo quyen -->
+            <a href="/" >Trang chu</a>
+
+            <!-- Neu dang nhap -->
+            <div th:if="${session.loggedUser != null}">
+
+                <!-- Admin -->
+                <span th:if="${session.loggedUser.role.name() == 'ADMIN'}">
+                    <a href="/admin/dashboard">Dashboard</a>
+                    <a href="/admin/movies">Quan ly phim</a>
+                    <a href="/admin/showtimes">Suat chieu</a>
+                </span>
+
+                <!-- Staff -->
+                <span th:if="${session.loggedUser.role.name() == 'STAFF'}">
+                    <a href="/staff/orders">Tra cuu ve</a>
+                </span>
+
+                <!-- Customer -->
+                <span th:if="${session.loggedUser.role.name() == 'CUSTOMER'}">
+                    <a href="/booking/history">Lich su dat ve</a>
+                </span>
+
+                <a href="/profile/edit">Ho so</a>
+
+                <!-- Hien ten user -->
+                <span class="username" th:text="'Xin chao, ' + ${session.loggedUser.username}"></span>
+                <a href="/auth/logout" class="btn-logout">Dang xuat</a>
+            </div>
+
+            <!-- Chua dang nhap -->
+            <div th:if="${session.loggedUser == null}">
+                <a href="/auth/login">Dang nhap</a>
+                <a href="/auth/register">Dang ky</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- FOOTER -->
+<footer th:fragment="footer">
+    <div class="footer">
+        <p>Cinema Booking System - Java Web Application</p>
+    </div>
+</footer>
+
+</body>
+</html>

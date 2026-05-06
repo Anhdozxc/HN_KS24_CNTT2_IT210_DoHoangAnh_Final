@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Tra cuu don hang</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container" style="max-width:700px;">
+    <h1 style="margin-bottom:20px;">Tra cuu don hang cua khach</h1>
+
+    <!-- Form tim kiem theo ma hoa don -->
+    <form method="get" action="/staff/orders/search"
+          style="display:flex;gap:10px;margin-bottom:24px;">
+        <input type="number" name="bookingId" placeholder="Nhap ma don hang (VD: 12)"
+               style="flex:1;padding:8px 12px;border:1px solid #ccc;border-radius:4px;"/>
+        <button type="submit" class="btn btn-primary">Tim kiem</button>
+    </form>
+
+    <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+
+    <!-- Hien ket qua tim kiem -->
+    <div th:if="${booking != null}"
+         style="background:#fff;border-radius:8px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.08);">
+        <h2 style="margin-bottom:16px;">Don hang #<span th:text="${booking.id}"></span></h2>
+
+        <table style="width:100%;margin-bottom:16px;">
+            <tr><td style="width:140px;color:#666;">Khach hang:</td>   <td th:text="${booking.user.username}"></td></tr>
+            <tr><td style="color:#666;">Phim:</td>          <td th:text="${booking.showtime.movie.title}"></td></tr>
+            <tr><td style="color:#666;">Phong:</td>         <td th:text="${booking.showtime.room.name}"></td></tr>
+            <tr><td style="color:#666;">Gio chieu:</td>     <td th:text="${#temporals.format(booking.showtime.startTime, 'HH:mm dd/MM/yyyy')}"></td></tr>
+            <tr><td style="color:#666;">Tong tien:</td>     <td th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VND'}"></td></tr>
+            <tr>
+                <td style="color:#666;">Trang thai:</td>
+                <td>
+                    <span class="badge badge-confirmed" th:if="${booking.status.name() == 'CONFIRMED'}">Da xac nhan</span>
+                    <span class="badge badge-cancelled" th:if="${booking.status.name() == 'CANCELLED'}">Da huy</span>
+                    <span class="badge badge-pending"   th:if="${booking.status.name() == 'PENDING'}">Dang cho</span>
+                </td>
+            </tr>
+        </table>
+
+        <h3 style="margin-bottom:10px;">Danh sach ghe:</h3>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            <span th:each="t : ${tickets}"
+                  style="border:1px solid #0066cc;padding:4px 12px;border-radius:4px;font-weight:bold;color:#0066cc;"
+                  th:text="${t.seat.seatName}">
+            </span>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>
