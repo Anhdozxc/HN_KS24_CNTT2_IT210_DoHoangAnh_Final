@@ -4,7 +4,6 @@ import com.cinema.dto.ShowtimeDTO;
 import com.cinema.entity.Showtime;
 import com.cinema.repository.MovieRepository;
 import com.cinema.repository.RoomRepository;
-import com.cinema.service.BookingService;
 import com.cinema.service.ShowtimeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +20,6 @@ import java.util.Map;
 public class AdminShowtimeController {
 
     @Autowired private ShowtimeService showtimeService;
-    @Autowired private BookingService bookingService;
     @Autowired private MovieRepository movieRepository;
     @Autowired private RoomRepository roomRepository;
 
@@ -31,16 +28,9 @@ public class AdminShowtimeController {
     public String list(Model model) {
         var showtimes = showtimeService.getAllShowtimes();
         Map<Long, String> statusMap = new HashMap<>();
-        LocalDateTime now = LocalDateTime.now();
 
         for (Showtime showtime : showtimes) {
-            if (showtime.getStartTime().isBefore(now)) {
-                statusMap.put(showtime.getId(), "ENDED");
-            } else if (bookingService.isSoldOut(showtime)) {
-                statusMap.put(showtime.getId(), "SOLD_OUT");
-            } else {
-                statusMap.put(showtime.getId(), "UPCOMING");
-            }
+            statusMap.put(showtime.getId(), showtimeService.getShowtimeStatus(showtime));
         }
 
         model.addAttribute("showtimes", showtimes);

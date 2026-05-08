@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -84,9 +83,7 @@ public class BookingController {
         Set<Long> cancellableBookingIds = new HashSet<>();
 
         for (Booking booking : bookings) {
-            boolean canCancel = booking.getStatus().name().equals("CONFIRMED")
-                    && LocalDateTime.now().isBefore(booking.getShowtime().getStartTime().minusHours(24));
-            if (canCancel) {
+            if (bookingService.canCancel(booking)) {
                 cancellableBookingIds.add(booking.getId());
             }
         }

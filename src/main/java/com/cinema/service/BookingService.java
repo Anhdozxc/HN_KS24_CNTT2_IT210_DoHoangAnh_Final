@@ -62,12 +62,16 @@ public class BookingService {
 
         List<Long> requestedSeatIds = new ArrayList<>(new LinkedHashSet<>(dto.getSeatIds()));
         if (requestedSeatIds.size() != dto.getSeatIds().size()) {
-            throw new RuntimeException("Danh sach ghe khong hop le");
+            throw new RuntimeException("Danh sach ghe chua ID trung lap");
         }
 
         List<Seat> seats = seatRepository.findByRoomIdAndIdIn(showtime.getRoom().getId(), requestedSeatIds);
         if (seats.size() != requestedSeatIds.size()) {
-            throw new RuntimeException("Co ghe khong thuoc phong chieu cua suat nay");
+            List<Long> validSeatIds = seats.stream().map(Seat::getId).toList();
+            List<Long> invalidSeatIds = requestedSeatIds.stream()
+                    .filter(seatId -> !validSeatIds.contains(seatId))
+                    .toList();
+            throw new RuntimeException("Ghe khong hop le cho suat chieu nay: " + invalidSeatIds);
         }
 
         Map<Long, Seat> seatMap = seats.stream()
@@ -135,8 +139,7 @@ public class BookingService {
         }
 
         // CORE-09: Chi cho huy truoc 24 gio
-        LocalDateTime showStart = booking.getShowtime().getStartTime();
-        if (LocalDateTime.now().isAfter(showStart.minusHours(24))) {
+        if (!canCancel(booking)) {
             throw new RuntimeException("Chi duoc huy ve truoc 24 gio so voi gio chieu");
         }
 
@@ -146,5 +149,12 @@ public class BookingService {
         // Cap nhat trang thai hoa don
         booking.setStatus(BookingStatus.CANCELLED);
         bookingRepository.save(booking);
+    }
+
+    public boolean canCancel(Booking booking) {
+        if (booking.getStatus() != BookingStatus.CONFIRMED) {
+            return false;
+        }
+        return LocalDateTime.now().isBefore(booking.getShowtime().getStartTime().minusHours(24));
     }
 }

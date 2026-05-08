@@ -7,6 +7,7 @@ import com.cinema.entity.Showtime;
 import com.cinema.repository.MovieRepository;
 import com.cinema.repository.RoomRepository;
 import com.cinema.repository.ShowtimeRepository;
+import com.cinema.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ public class ShowtimeService {
     @Autowired private ShowtimeRepository showtimeRepository;
     @Autowired private MovieRepository movieRepository;
     @Autowired private RoomRepository roomRepository;
+    @Autowired private TicketRepository ticketRepository;
 
     // CORE-08: Lay suat chieu chua het gio
     public List<Showtime> getAvailableShowtimes() {
@@ -36,6 +38,16 @@ public class ShowtimeService {
 
     public Optional<Showtime> findById(Long id) {
         return showtimeRepository.findById(id);
+    }
+
+    public String getShowtimeStatus(Showtime showtime) {
+        if (showtime.getStartTime().isBefore(LocalDateTime.now())) {
+            return "ENDED";
+        }
+        if (ticketRepository.countByShowtimeId(showtime.getId()) >= showtime.getRoom().getTotalSeats()) {
+            return "SOLD_OUT";
+        }
+        return "UPCOMING";
     }
 
     // CORE-05: Tao suat chieu (co kiem tra xung dot phong)
