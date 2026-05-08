@@ -37,14 +37,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "WHERE b.id = :id")
     java.util.Optional<Booking> findByIdWithDetails(@Param("id") Long id);
 
-    @Query("SELECT COALESCE(SUM(b.totalPrice), 0) FROM Booking b WHERE b.status = 'CONFIRMED'")
-    BigDecimal getTotalConfirmedRevenue();
+    @Query("SELECT COALESCE(SUM(b.totalPrice), 0) FROM Booking b WHERE b.status = :status")
+    BigDecimal getTotalRevenueByStatus(@Param("status") BookingStatus status);
 
     @Query("SELECT s.movie.title AS movieTitle, COALESCE(SUM(b.totalPrice), 0) AS revenue, COUNT(b) AS confirmedBookings " +
             "FROM Booking b " +
             "JOIN b.showtime s " +
-            "WHERE b.status = 'CONFIRMED' " +
+            "WHERE b.status = :status " +
             "GROUP BY s.movie.id, s.movie.title " +
             "ORDER BY COALESCE(SUM(b.totalPrice), 0) DESC")
-    List<MovieRevenueView> findTopMoviesByRevenue(Pageable pageable);
+    List<MovieRevenueView> findTopMoviesByRevenue(@Param("status") BookingStatus status, Pageable pageable);
 }

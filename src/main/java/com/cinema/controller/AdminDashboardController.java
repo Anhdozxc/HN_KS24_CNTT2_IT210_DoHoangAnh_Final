@@ -1,5 +1,6 @@
 package com.cinema.controller;
 
+import com.cinema.entity.enums.BookingStatus;
 import com.cinema.repository.projection.MovieRevenueView;
 import com.cinema.repository.BookingRepository;
 import com.cinema.repository.MovieRepository;
@@ -24,8 +25,11 @@ public class AdminDashboardController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        BigDecimal totalRevenue = bookingRepository.getTotalConfirmedRevenue();
-        List<MovieRevenueView> topMovies = bookingRepository.findTopMoviesByRevenue(PageRequest.of(0, 5));
+        BigDecimal totalRevenue = bookingRepository.getTotalRevenueByStatus(BookingStatus.CONFIRMED);
+        List<MovieRevenueView> topMovies = bookingRepository.findTopMoviesByRevenue(
+                BookingStatus.CONFIRMED,
+                PageRequest.of(0, 5)
+        );
 
         model.addAttribute("totalMovies", movieRepository.count());
         model.addAttribute("totalUsers", userRepository.count());
