@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 @Getter @Setter
 public class ShowtimeDTO {
 
+    private Long id;
+
     @NotNull(message = "Vui long chon phim")
     private Long movieId;
 

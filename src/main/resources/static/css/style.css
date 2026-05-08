@@ -114,6 +114,8 @@ tr:hover { background: #fafafa; }
 .badge-cancelled { background: #ffe0e0; color: #c00; }
 .badge-pending   { background: #fff0cc; color: #996600; }
 .badge-soldout   { background: #ffe0e0; color: #c00; }
+.badge-upcoming  { background: #e6f0ff; color: #004999; }
+.badge-ended     { background: #f0f0f0; color: #666; }
 
 /* ===== SHOWTIME LIST ===== */
 .showtime-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }

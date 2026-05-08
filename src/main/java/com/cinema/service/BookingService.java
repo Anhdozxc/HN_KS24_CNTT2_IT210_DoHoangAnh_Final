@@ -5,13 +5,17 @@ import com.cinema.entity.*;
 import com.cinema.entity.enums.BookingStatus;
 import com.cinema.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
@@ -52,20 +56,37 @@ public class BookingService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Nguoi dung khong ton tai"));
 
+        if (dto.getSeatIds() == null || dto.getSeatIds().isEmpty()) {
+            throw new RuntimeException("Vui long chon it nhat 1 ghe");
+        }
+
+        List<Long> requestedSeatIds = new ArrayList<>(new LinkedHashSet<>(dto.getSeatIds()));
+        if (requestedSeatIds.size() != dto.getSeatIds().size()) {
+            throw new RuntimeException("Danh sach ghe khong hop le");
+        }
+
+        List<Seat> seats = seatRepository.findByRoomIdAndIdIn(showtime.getRoom().getId(), requestedSeatIds);
+        if (seats.size() != requestedSeatIds.size()) {
+            throw new RuntimeException("Co ghe khong thuoc phong chieu cua suat nay");
+        }
+
+        Map<Long, Seat> seatMap = seats.stream()
+                .collect(Collectors.toMap(Seat::getId, seat -> seat));
+
         // CORE-06: Kiem tra ghe co bi nguoi khac dat truoc khong
         int conflict = ticketRepository.countByShowtimeIdAndSeatIdIn(
-                dto.getShowtimeId(), dto.getSeatIds()
+                dto.getShowtimeId(), requestedSeatIds
         );
         if (conflict > 0) {
             // Rollback: nem exception de Spring tu dong rollback
             throw new RuntimeException(
-                    "Mot so ghe vua bi dat boi nguoi khac. Vui long chon lai ghe."
+                    "Ghe vua duoc nguoi khac dat, vui long chon lai."
             );
         }
 
         // Tinh tong tien
         BigDecimal totalPrice = showtime.getPrice()
-                .multiply(BigDecimal.valueOf(dto.getSeatIds().size()));
+                .multiply(BigDecimal.valueOf(requestedSeatIds.size()));
 
         // Tao hoa don
         Booking booking = new Booking();
@@ -78,9 +99,8 @@ public class BookingService {
 
         // Tao ve cho tung ghe duoc chon
         List<Ticket> tickets = new ArrayList<>();
-        for (Long seatId : dto.getSeatIds()) {
-            Seat seat = seatRepository.findById(seatId)
-                    .orElseThrow(() -> new RuntimeException("Ghe khong ton tai"));
+        for (Long seatId : requestedSeatIds) {
+            Seat seat = seatMap.get(seatId);
             Ticket ticket = new Ticket();
             ticket.setBooking(booking);
             ticket.setSeat(seat);
@@ -88,7 +108,12 @@ public class BookingService {
             ticket.setPrice(showtime.getPrice());
             tickets.add(ticket);
         }
-        ticketRepository.saveAll(tickets);
+
+        try {
+            ticketRepository.saveAllAndFlush(tickets);
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException("Ghe vua duoc nguoi khac dat, vui long chon lai.");
+        }
 
         return booking;
     }

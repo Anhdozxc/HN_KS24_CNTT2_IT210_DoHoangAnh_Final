@@ -26,6 +26,7 @@
                 <th>Giờ bắt đầu</th>
                 <th>Giờ kết thúc</th>
                 <th>Giá vé</th>
+                <th>Trạng thái</th>
                 <th>Hành động</th>
             </tr>
             </thead>
@@ -39,6 +40,14 @@
                 <td th:text="${#temporals.format(s.endTime, 'dd/MM/yyyy HH:mm')}"></td>
                 <td th:text="${#numbers.formatDecimal(s.price, 0, 'COMMA', 0, 'POINT') + ' VND'}"></td>
                 <td>
+                    <span class="badge badge-upcoming" th:if="${statusMap[s.id] == 'UPCOMING'}">Sắp chiếu</span>
+                    <span class="badge badge-ended" th:if="${statusMap[s.id] == 'ENDED'}">Đã qua giờ</span>
+                    <span class="badge badge-soldout" th:if="${statusMap[s.id] == 'SOLD_OUT'}">Hết vé</span>
+                </td>
+                <td>
+                    <a th:href="@{/admin/showtimes/edit/{id}(id=${s.id})}"
+                       class="btn btn-secondary"
+                       style="padding:4px 10px;font-size:0.85rem;margin-right:6px;">Sửa</a>
                     <form th:action="@{/admin/showtimes/delete/{id}(id=${s.id})}"
                           method="post" style="display:inline;"
                           onsubmit="return confirm('Xóa suất chiếu này?')">
@@ -47,7 +56,7 @@
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(showtimes)}">
-                <td colspan="7" style="text-align:center;color:#aaa;">Chưa có suất chiếu nào</td>
+                <td colspan="8" style="text-align:center;color:#aaa;">Chưa có suất chiếu nào</td>
             </tr>
             </tbody>
         </table>

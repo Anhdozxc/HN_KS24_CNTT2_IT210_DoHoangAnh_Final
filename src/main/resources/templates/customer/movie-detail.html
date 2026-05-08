@@ -37,6 +37,7 @@
 
             <!-- CORE-08: Hiển "Hết vé" nếu sold out -->
             <span class="badge badge-soldout" th:if="${soldOutMap[s.id]}">Hết vé</span>
+            <span class="badge badge-upcoming" th:if="${!soldOutMap[s.id]}">Còn ghế</span>
 
             <!-- Chỉ hiển nút đặt vé nếu còn ghế và đã đăng nhập -->
             <a th:if="${!soldOutMap[s.id] and session.loggedUser != null and session.loggedUser.role.name() == 'CUSTOMER'}"

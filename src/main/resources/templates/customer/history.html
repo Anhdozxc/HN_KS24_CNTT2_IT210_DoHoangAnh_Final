@@ -28,6 +28,13 @@
                     <span th:text="${b.showtime.room.name}"></span> |
                     <span th:text="${#temporals.format(b.showtime.startTime, 'HH:mm dd/MM/yyyy')}"></span>
                 </div>
+                <div style="margin-top:8px;color:#444;">
+                    <strong>Ghế:</strong>
+                    <span th:if="${#lists.isEmpty(b.tickets)}">Không còn ghế giữ chỗ</span>
+                    <span th:each="ticket, iter : ${b.tickets}">
+                        <span th:text="${ticket.seat.seatName}"></span><span th:if="${!iter.last}">, </span>
+                    </span>
+                </div>
                 <div style="color:#e94560;font-weight:bold;margin-top:6px;"
                      th:text="${#numbers.formatDecimal(b.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VND'}"></div>
                 <div style="font-size:0.82rem;color:#999;margin-top:4px;"
@@ -40,12 +47,16 @@
                 <span class="badge badge-pending"   th:if="${b.status.name() == 'PENDING'}">Chờ xử lý</span>
 
                 <!-- CORE-09: Nút hủy vé (chỉ hiển khi CONFIRMED và chưa chiếu) -->
-                <form th:if="${b.status.name() == 'CONFIRMED'}"
+                <form th:if="${cancellableBookingIds.contains(b.id)}"
                       th:action="@{/booking/cancel/{id}(id=${b.id})}"
                       method="post" style="margin-top:8px;"
                       onsubmit="return confirm('Bạn có chắc chắn muốn hủy vé này?')">
                     <button type="submit" class="btn btn-danger" style="font-size:0.85rem;padding:4px 10px;">Hủy vé</button>
                 </form>
+                <div th:if="${b.status.name() == 'CONFIRMED' and !cancellableBookingIds.contains(b.id)}"
+                     style="margin-top:8px;font-size:0.82rem;color:#999;">
+                    Đã quá hạn hủy vé trước 24 giờ.
+                </div>
             </div>
         </div>
     </div>
