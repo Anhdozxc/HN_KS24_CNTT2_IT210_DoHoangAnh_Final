@@ -18,6 +18,8 @@ import java.util.Optional;
 @Service
 public class ShowtimeService {
 
+    private static final int CLEANUP_MINUTES = 15;
+
     @Autowired private ShowtimeRepository showtimeRepository;
     @Autowired private MovieRepository movieRepository;
     @Autowired private RoomRepository roomRepository;
@@ -105,7 +107,7 @@ public class ShowtimeService {
     }
 
     private LocalDateTime calculateEndTime(LocalDateTime start, Movie movie) {
-        return start.plusMinutes(movie.getDuration() + 15);
+        return start.plusMinutes(movie.getDuration() + CLEANUP_MINUTES);
     }
 
     private void validateConflict(Long roomId, LocalDateTime start, LocalDateTime end, Long excludeId) {
@@ -116,7 +118,7 @@ public class ShowtimeService {
         if (conflict) {
             throw new RuntimeException(
                     "Phong chieu bi trung gio. Gio ket thuc du kien: " + end +
-                            " (bao gom 15 phut don phong)"
+                            " (bao gom " + CLEANUP_MINUTES + " phut don phong)"
             );
         }
     }

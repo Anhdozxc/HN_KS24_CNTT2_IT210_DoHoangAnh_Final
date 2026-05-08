@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,7 +76,7 @@ public class BookingService {
         }
 
         Map<Long, Seat> seatMap = seats.stream()
-                .collect(Collectors.toMap(Seat::getId, seat -> seat));
+                .collect(Collectors.toMap(Seat::getId, Function.identity()));
 
         // CORE-06: Kiem tra ghe co bi nguoi khac dat truoc khong
         int conflict = ticketRepository.countByShowtimeIdAndSeatIdIn(
