@@ -28,9 +28,11 @@
 
         <table style="width:100%;margin-bottom:16px;">
             <tr><td style="width:140px;color:#666;">Khách hàng:</td>   <td th:text="${booking.user.username}"></td></tr>
+            <tr><td style="color:#666;">Email:</td>         <td th:text="${booking.user.email}"></td></tr>
             <tr><td style="color:#666;">Phim:</td>          <td th:text="${booking.showtime.movie.title}"></td></tr>
             <tr><td style="color:#666;">Phòng:</td>         <td th:text="${booking.showtime.room.name}"></td></tr>
             <tr><td style="color:#666;">Giờ chiếu:</td>     <td th:text="${#temporals.format(booking.showtime.startTime, 'HH:mm dd/MM/yyyy')}"></td></tr>
+            <tr><td style="color:#666;">Đặt lúc:</td>       <td th:text="${#temporals.format(booking.bookedAt, 'HH:mm dd/MM/yyyy')}"></td></tr>
             <tr><td style="color:#666;">Tổng tiền:</td>     <td th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VND'}"></td></tr>
             <tr>
                 <td style="color:#666;">Trạng thái:</td>
@@ -49,6 +51,10 @@
                   th:text="${t.seat.seatName}">
             </span>
         </div>
+
+        <button type="button" class="btn btn-primary" style="margin-top:16px;" onclick="window.print()">
+            In vé
+        </button>
     </div>
 </div>
 

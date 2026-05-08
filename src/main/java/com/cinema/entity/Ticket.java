@@ -6,7 +6,13 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "tickets")
+@Table(
+        name = "tickets",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_ticket_showtime_seat",
+                columnNames = {"showtime_id", "seat_id"}
+        )
+)
 @Getter @Setter
 public class Ticket {
 

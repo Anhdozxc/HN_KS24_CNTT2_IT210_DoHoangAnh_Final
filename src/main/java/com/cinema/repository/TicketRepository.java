@@ -26,7 +26,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
                                      @Param("seatIds") List<Long> seatIds);
 
     // Lay ve theo hoa don (hien thi chi tiet ghe)
-    @Query("SELECT t FROM Ticket t JOIN FETCH t.seat WHERE t.booking.id = :bookingId")
+    @Query("SELECT t FROM Ticket t JOIN FETCH t.seat WHERE t.booking.id = :bookingId ORDER BY t.seat.seatName")
     List<Ticket> findByBookingIdWithSeat(@Param("bookingId") Long bookingId);
 
     // CORE-09: Xoa ve khi huy (giai phong ghe)

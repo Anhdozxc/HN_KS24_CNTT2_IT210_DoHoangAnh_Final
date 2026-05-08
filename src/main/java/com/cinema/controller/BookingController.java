@@ -12,8 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriUtils;
 
+import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/booking")
@@ -48,9 +52,8 @@ public class BookingController {
             Booking booking = bookingService.createBooking(user.getId(), dto);
             return "redirect:/booking/success/" + booking.getId();
         } catch (RuntimeException e) {
-            model.addAttribute("error", e.getMessage());
-            // Quay lai trang chon ghe
-            return "redirect:/booking/seats/" + dto.getShowtimeId() + "?error=" + e.getMessage();
+            String error = UriUtils.encode(e.getMessage(), StandardCharsets.UTF_8);
+            return "redirect:/booking/seats/" + dto.getShowtimeId() + "?error=" + error;
         }
     }
 
@@ -77,7 +80,16 @@ public class BookingController {
     public String history(HttpSession session, Model model) {
         User user = (User) session.getAttribute("loggedUser");
         List<Booking> bookings = bookingService.getBookingHistory(user.getId());
+        Set<Long> cancellableBookingIds = new HashSet<>();
+
+        for (Booking booking : bookings) {
+            if (bookingService.canCancel(booking)) {
+                cancellableBookingIds.add(booking.getId());
+            }
+        }
+
         model.addAttribute("bookings", bookings);
+        model.addAttribute("cancellableBookingIds", cancellableBookingIds);
         return "customer/history";
     }
 
@@ -91,7 +103,8 @@ public class BookingController {
             bookingService.cancelBooking(bookingId, user.getId());
             return "redirect:/booking/history?success=cancelled";
         } catch (RuntimeException e) {
-            return "redirect:/booking/history?error=" + e.getMessage();
+            String error = UriUtils.encode(e.getMessage(), StandardCharsets.UTF_8);
+            return "redirect:/booking/history?error=" + error;
         }
     }
 }

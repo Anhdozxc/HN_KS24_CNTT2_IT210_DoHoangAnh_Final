@@ -2,7 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Thêm suất chiếu</title>
+    <title th:text="${dto.id == null ? 'Thêm suất chiếu' : 'Sửa suất chiếu'}">Thêm suất chiếu</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
@@ -10,7 +10,7 @@
 
 <div class="container">
     <div class="page-header">
-        <h1>Tạo suất chiếu mới</h1>
+        <h1 th:text="${dto.id == null ? 'Tạo suất chiếu mới' : 'Cập nhật suất chiếu'}">Tạo suất chiếu mới</h1>
         <a href="/admin/showtimes" class="btn btn-secondary">Quay lại</a>
     </div>
 
@@ -20,6 +20,8 @@
     <form method="post" action="/admin/showtimes/save"
           th:object="${dto}"
           style="background:#fff;padding:24px;border-radius:8px;max-width:500px;box-shadow:0 2px 8px rgba(0,0,0,.08);">
+
+        <input type="hidden" th:field="*{id}"/>
 
         <div class="form-group">
             <label>Phim *</label>
@@ -61,7 +63,7 @@
             Hệ thống tự động kiểm tra xung đột phòng.
         </p>
 
-        <button type="submit" class="btn btn-primary">Tạo suất chiếu</button>
+        <button type="submit" class="btn btn-primary" th:text="${dto.id == null ? 'Tạo suất chiếu' : 'Lưu thay đổi'}">Tạo suất chiếu</button>
     </form>
 </div>
 

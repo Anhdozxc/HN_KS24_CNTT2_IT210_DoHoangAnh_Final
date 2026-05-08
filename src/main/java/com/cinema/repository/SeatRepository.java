@@ -7,4 +7,6 @@ import java.util.List;
 public interface SeatRepository extends JpaRepository<Seat, Long> {
     // Lay tat ca ghe cua 1 phong (de hien so do ghe)
     List<Seat> findByRoomId(Long roomId);
+
+    List<Seat> findByRoomIdAndIdIn(Long roomId, List<Long> seatIds);
 }
