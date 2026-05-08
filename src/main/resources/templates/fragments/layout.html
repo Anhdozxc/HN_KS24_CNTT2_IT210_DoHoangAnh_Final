@@ -9,46 +9,46 @@
 </head>
 <body>
 
-<!-- THANH DIEU HUONG (dung th:fragment de nhuc vao trang khac) -->
+<!-- THANH ĐIỀU HƯỚNG (dùng th:fragment để nhúc vào trang khác) -->
 <nav th:fragment="navbar">
     <div class="navbar">
         <a href="/" class="logo">CinemaBooking</a>
 
         <div class="nav-links">
-            <!-- Hien link theo quyen -->
-            <a href="/" >Trang chu</a>
+            <!-- Hiển link theo quyền -->
+            <a href="/" >Trang chủ</a>
 
-            <!-- Neu dang nhap -->
+            <!-- Nếu đăng nhập -->
             <div th:if="${session.loggedUser != null}">
 
                 <!-- Admin -->
                 <span th:if="${session.loggedUser.role.name() == 'ADMIN'}">
                     <a href="/admin/dashboard">Dashboard</a>
-                    <a href="/admin/movies">Quan ly phim</a>
-                    <a href="/admin/showtimes">Suat chieu</a>
+                    <a href="/admin/movies">Quản lý phim</a>
+                    <a href="/admin/showtimes">Suất chiếu</a>
                 </span>
 
                 <!-- Staff -->
                 <span th:if="${session.loggedUser.role.name() == 'STAFF'}">
-                    <a href="/staff/orders">Tra cuu ve</a>
+                    <a href="/staff/orders">Tra cứu vé</a>
                 </span>
 
                 <!-- Customer -->
                 <span th:if="${session.loggedUser.role.name() == 'CUSTOMER'}">
-                    <a href="/booking/history">Lich su dat ve</a>
+                    <a href="/booking/history">Lịch sử đặt vé</a>
                 </span>
 
-                <a href="/profile/edit">Ho so</a>
+                <a href="/profile/edit">Hồ sơ</a>
 
-                <!-- Hien ten user -->
-                <span class="username" th:text="'Xin chao, ' + ${session.loggedUser.username}"></span>
-                <a href="/auth/logout" class="btn-logout">Dang xuat</a>
+                <!-- Hiển tên user -->
+                <span class="username" th:text="'Xin chào, ' + ${session.loggedUser.username}"></span>
+                <a href="/auth/logout" class="btn-logout">Đăng xuất</a>
             </div>
 
-            <!-- Chua dang nhap -->
+            <!-- Chưa đăng nhập -->
             <div th:if="${session.loggedUser == null}">
-                <a href="/auth/login">Dang nhap</a>
-                <a href="/auth/register">Dang ky</a>
+                <a href="/auth/login">Đăng nhập</a>
+                <a href="/auth/register">Đăng ký</a>
             </div>
         </div>
     </div>

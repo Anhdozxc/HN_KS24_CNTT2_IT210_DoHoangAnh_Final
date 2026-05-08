@@ -2,7 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Quan ly suat chieu</title>
+    <title>Quản lý suất chiếu</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
@@ -10,11 +10,11 @@
 
 <div class="container">
     <div class="page-header">
-        <h1>Danh sach suat chieu</h1>
-        <a href="/admin/showtimes/new" class="btn btn-primary">+ Them suat chieu</a>
+        <h1>Danh sách suất chiếu</h1>
+        <a href="/admin/showtimes/new" class="btn btn-primary">+ Thêm suất chiếu</a>
     </div>
 
-    <div class="alert alert-success" th:if="${param.success}">Thao tac thanh cong!</div>
+    <div class="alert alert-success" th:if="${param.success}">Thao tác thành công!</div>
 
     <div class="table-wrap">
         <table>
@@ -22,11 +22,11 @@
             <tr>
                 <th>#</th>
                 <th>Phim</th>
-                <th>Phong</th>
-                <th>Gio bat dau</th>
-                <th>Gio ket thuc</th>
-                <th>Gia ve</th>
-                <th>Hanh dong</th>
+                <th>Phòng</th>
+                <th>Giờ bắt đầu</th>
+                <th>Giờ kết thúc</th>
+                <th>Giá vé</th>
+                <th>Hành động</th>
             </tr>
             </thead>
             <tbody>
@@ -41,13 +41,13 @@
                 <td>
                     <form th:action="@{/admin/showtimes/delete/{id}(id=${s.id})}"
                           method="post" style="display:inline;"
-                          onsubmit="return confirm('Xoa suat chieu nay?')">
-                        <button type="submit" class="btn btn-danger" style="padding:4px 10px;font-size:0.85rem;">Xoa</button>
+                          onsubmit="return confirm('Xóa suất chiếu này?')">
+                        <button type="submit" class="btn btn-danger" style="padding:4px 10px;font-size:0.85rem;">Xóa</button>
                     </form>
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(showtimes)}">
-                <td colspan="7" style="text-align:center;color:#aaa;">Chua co suat chieu nao</td>
+                <td colspan="7" style="text-align:center;color:#aaa;">Chưa có suất chiếu nào</td>
             </tr>
             </tbody>
         </table>

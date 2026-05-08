@@ -1,8 +1,31 @@
 /* ===== RESET & BASE ===== */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: Arial, sans-serif; background: #f5f5f5; color: #333; }
+html, body { height: 100%; }
+body { font-family: Arial, sans-serif; background: #f5f5f5; color: #333; display: flex; flex-direction: column; }
 a { text-decoration: none; color: #0066cc; }
 a:hover { text-decoration: underline; }
+
+/* ===== AUTH PAGE ===== */
+.auth-page {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+}
+.form-card {
+    width: 100%;
+    max-width: 440px;
+    background: #fff;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 2px 14px rgba(0,0,0,.10);
+}
+.form-card h2 { margin-bottom: 20px; color: #1a1a2e; text-align: center; }
+.auth-message-slot { min-height: 54px; margin-bottom: 8px; }
+.auth-message-slot .alert { margin-bottom: 0; }
+.field-error-slot { min-height: 18px; margin-top: 4px; }
+.field-error-slot .error-msg { display: block; color: #c00; font-size: 0.82rem; line-height: 1.2; }
 
 /* ===== NAVBAR ===== */
 .navbar {
@@ -20,23 +43,20 @@ a:hover { text-decoration: underline; }
 .btn-logout { background: #e94560; color: #fff !important; padding: 4px 12px; border-radius: 4px; margin-left: 12px; }
 
 /* ===== CONTAINER ===== */
-.container { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+.container { max-width: 1100px; margin: 24px auto; padding: 0 16px; flex: 1; }
 
-/* ===== ALERT (thong bao loi / thanh cong) ===== */
+/* ===== ALERT (thông báo lỗi / thành công) ===== */
 .alert { padding: 12px 16px; border-radius: 6px; margin-bottom: 16px; }
 .alert-error   { background: #ffe0e0; color: #c00; border: 1px solid #f5c6c6; }
 .alert-success { background: #e0ffe0; color: #060; border: 1px solid #c6f5c6; }
 
 /* ===== FORM ===== */
-.form-card { background: #fff; padding: 28px; border-radius: 8px; max-width: 480px; margin: 40px auto; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
-.form-card h2 { margin-bottom: 20px; color: #1a1a2e; }
 .form-group { margin-bottom: 14px; }
 .form-group label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 0.9rem; }
 .form-group input, .form-group select, .form-group textarea {
     width: 100%; padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95rem;
 }
 .form-group textarea { height: 90px; resize: vertical; }
-.form-group .error-msg { color: #c00; font-size: 0.82rem; margin-top: 3px; }
 
 /* ===== BUTTON ===== */
 .btn { display: inline-block; padding: 8px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.95rem; }
@@ -82,13 +102,13 @@ tr:hover { background: #fafafa; }
 .legend-box { width: 20px; height: 20px; border-radius: 3px; }
 
 /* ===== FOOTER ===== */
-.footer { background: #1a1a2e; color: #aaa; text-align: center; padding: 16px; margin-top: 40px; font-size: 0.85rem; }
+.footer { background: #1a1a2e; color: #aaa; text-align: center; padding: 16px; font-size: 0.85rem; margin-top: auto; }
 
 /* ===== PAGE HEADER ===== */
 .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .page-header h1 { font-size: 1.4rem; color: #1a1a2e; }
 
-/* ===== BADGE (trang thai) ===== */
+/* ===== BADGE (trạng thái) ===== */
 .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; font-weight: bold; }
 .badge-confirmed { background: #e0ffe0; color: #060; }
 .badge-cancelled { background: #ffe0e0; color: #c00; }
@@ -101,6 +121,16 @@ tr:hover { background: #fafafa; }
 .showtime-item a { display: block; color: #0066cc; font-weight: bold; }
 .showtime-item .price { font-size: 0.85rem; color: #666; }
 
-/* ===== BOOKING SUMMARY (tong tien) ===== */
+/* ===== BOOKING SUMMARY (tổng tiền) ===== */
 .booking-summary { background: #fff; border-radius: 8px; padding: 20px; margin-top: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
 .booking-summary .total { font-size: 1.3rem; font-weight: bold; color: #e94560; margin-top: 10px; }
+
+@media (max-width: 576px) {
+    .form-card { padding: 24px 18px; }
+    .auth-message-slot { min-height: 60px; }
+    .navbar { padding: 12px 16px; flex-direction: column; gap: 10px; align-items: flex-start; }
+    .navbar .nav-links { display: flex; flex-wrap: wrap; gap: 10px; }
+    .navbar .nav-links a { margin-left: 0; }
+    .page-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .movie-grid { grid-template-columns: 1fr; }
+}

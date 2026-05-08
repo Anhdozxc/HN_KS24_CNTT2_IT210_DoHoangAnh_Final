@@ -2,7 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Them suat chieu</title>
+    <title>Thêm suất chiếu</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
@@ -10,11 +10,11 @@
 
 <div class="container">
     <div class="page-header">
-        <h1>Tao suat chieu moi</h1>
-        <a href="/admin/showtimes" class="btn btn-secondary">Quay lai</a>
+        <h1>Tạo suất chiếu mới</h1>
+        <a href="/admin/showtimes" class="btn btn-secondary">Quay lại</a>
     </div>
 
-    <!-- Hien loi xung dot phong -->
+    <!-- Hiển lỗi xung đột phòng -->
     <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
 
     <form method="post" action="/admin/showtimes/save"
@@ -24,44 +24,44 @@
         <div class="form-group">
             <label>Phim *</label>
             <select th:field="*{movieId}">
-                <option value="">-- Chon phim --</option>
+                <option value="">-- Chọn phim --</option>
                 <option th:each="m : ${movies}"
                         th:value="${m.id}"
-                        th:text="${m.title + ' (' + m.duration + ' phut)'}"></option>
+                        th:text="${m.title + ' (' + m.duration + ' phút)'}"></option>
             </select>
             <span class="error-msg" th:if="${#fields.hasErrors('movieId')}" th:errors="*{movieId}"></span>
         </div>
 
         <div class="form-group">
-            <label>Phong chieu *</label>
+            <label>Phòng chiếu *</label>
             <select th:field="*{roomId}">
-                <option value="">-- Chon phong --</option>
+                <option value="">-- Chọn phòng --</option>
                 <option th:each="r : ${rooms}"
                         th:value="${r.id}"
-                        th:text="${r.name + ' (' + r.totalSeats + ' ghe)'}"></option>
+                        th:text="${r.name + ' (' + r.totalSeats + ' ghế)'}"></option>
             </select>
             <span class="error-msg" th:if="${#fields.hasErrors('roomId')}" th:errors="*{roomId}"></span>
         </div>
 
         <div class="form-group">
-            <label>Gio bat dau *</label>
-            <!-- datetime-local: input chon ngay gio tren trinh duyet -->
+            <label>Giờ bắt đầu *</label>
+            <!-- datetime-local: input chọn ngày giờ trên trình duyệt -->
             <input type="datetime-local" th:field="*{startTime}"/>
             <span class="error-msg" th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}"></span>
         </div>
 
         <div class="form-group">
-            <label>Gia ve (VND) *</label>
+            <label>Giá vé (VND) *</label>
             <input type="number" th:field="*{price}" min="0" step="1000"/>
             <span class="error-msg" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
         </div>
 
         <p style="font-size:0.85rem;color:#666;margin-bottom:14px;">
-            Luu y: Gio ket thuc = Gio bat dau + Thoi luong phim + 15 phut don phong.
-            He thong tu dong kiem tra xung dot phong.
+            Lưu ý: Giờ kết thúc = Giờ bắt đầu + Thời lượng phim + 15 phút dọn phòng.
+            Hệ thống tự động kiểm tra xung đột phòng.
         </p>
 
-        <button type="submit" class="btn btn-primary">Tao suat chieu</button>
+        <button type="submit" class="btn btn-primary">Tạo suất chiếu</button>
     </form>
 </div>
 

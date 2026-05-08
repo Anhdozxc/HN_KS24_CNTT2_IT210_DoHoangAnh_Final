@@ -7,31 +7,31 @@
 </head>
 <body>
 
-<!-- Nhuc navbar tu fragment -->
+<!-- Nhúc navbar từ fragment -->
 <div th:replace="~{fragments/layout :: navbar}"></div>
 
 <div class="container">
-    <h1 style="margin-bottom:24px;">Trang quan tri</h1>
+    <h1 style="margin-bottom:24px;">Trang quản trị</h1>
 
-    <!-- 3 o thong ke -->
+    <!-- 3 ô thống kê -->
     <div style="display:flex; gap:20px; margin-bottom:30px;">
         <div style="background:#fff;padding:20px;border-radius:8px;flex:1;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.08);">
             <div style="font-size:2rem;font-weight:bold;color:#0066cc;" th:text="${totalMovies}">0</div>
-            <div>Tong so phim</div>
+            <div>Tổng số phim</div>
         </div>
         <div style="background:#fff;padding:20px;border-radius:8px;flex:1;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.08);">
             <div style="font-size:2rem;font-weight:bold;color:#007700;" th:text="${totalUsers}">0</div>
-            <div>Nguoi dung</div>
+            <div>Người dùng</div>
         </div>
         <div style="background:#fff;padding:20px;border-radius:8px;flex:1;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.08);">
             <div style="font-size:2rem;font-weight:bold;color:#e94560;" th:text="${totalBookings}">0</div>
-            <div>Tong don dat ve</div>
+            <div>Tổng đơn đặt vé</div>
         </div>
     </div>
 
     <div style="display:flex;gap:12px;">
-        <a href="/admin/movies" class="btn btn-primary">Quan ly phim</a>
-        <a href="/admin/showtimes" class="btn btn-secondary">Quan ly suat chieu</a>
+        <a href="/admin/movies" class="btn btn-primary">Quản lý phim</a>
+        <a href="/admin/showtimes" class="btn btn-secondary">Quản lý suất chiếu</a>
     </div>
 </div>
 

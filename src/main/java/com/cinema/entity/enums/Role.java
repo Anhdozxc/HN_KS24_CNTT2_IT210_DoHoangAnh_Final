@@ -1,7 +1,7 @@
 package com.cinema.entity.enums;
 
 public enum Role {
-    CUSTOMER,   // Khach hang
-    STAFF,      // Nhan vien rap
-    ADMIN       // Quan tri vien
+    CUSTOMER,   // Khách hàng
+    STAFF,      // Nhân viên rạp
+    ADMIN       // Quản trị viên
 }

@@ -2,23 +2,23 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Lich su dat ve</title>
+    <title>Lịch sử đặt vé</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
 <div th:replace="~{fragments/layout :: navbar}"></div>
 
 <div class="container">
-    <h1 style="margin-bottom:16px;">Lich su dat ve cua ban</h1>
+    <h1 style="margin-bottom:16px;">Lịch sử đặt vé của bạn</h1>
 
-    <div class="alert alert-success" th:if="${param.success}">Da huy ve thanh cong!</div>
+    <div class="alert alert-success" th:if="${param.success}">Đã hủy vé thành công!</div>
     <div class="alert alert-error" th:if="${param.error}" th:text="${param.error}"></div>
 
     <div th:if="${#lists.isEmpty(bookings)}" style="color:#aaa;text-align:center;margin-top:40px;">
-        Ban chua dat ve lan nao.
+        Bạn chưa đặt vé lần nào.
     </div>
 
-    <!-- Moi hoa don hien 1 card -->
+    <!-- Mỗi hóa đơn hiển 1 card -->
     <div th:each="b : ${bookings}"
          style="background:#fff;border-radius:8px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.08);">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;">
@@ -31,20 +31,20 @@
                 <div style="color:#e94560;font-weight:bold;margin-top:6px;"
                      th:text="${#numbers.formatDecimal(b.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VND'}"></div>
                 <div style="font-size:0.82rem;color:#999;margin-top:4px;"
-                     th:text="'Dat luc: ' + ${#temporals.format(b.bookedAt, 'HH:mm dd/MM/yyyy')}"></div>
+                     th:text="'Đặt lúc: ' + ${#temporals.format(b.bookedAt, 'HH:mm dd/MM/yyyy')}"></div>
             </div>
             <div style="text-align:right;">
-                <!-- Badge trang thai -->
-                <span class="badge badge-confirmed" th:if="${b.status.name() == 'CONFIRMED'}">Da xac nhan</span>
-                <span class="badge badge-cancelled" th:if="${b.status.name() == 'CANCELLED'}">Da huy</span>
-                <span class="badge badge-pending"   th:if="${b.status.name() == 'PENDING'}">Cho xu ly</span>
+                <!-- Badge trạng thái -->
+                <span class="badge badge-confirmed" th:if="${b.status.name() == 'CONFIRMED'}">Đã xác nhận</span>
+                <span class="badge badge-cancelled" th:if="${b.status.name() == 'CANCELLED'}">Đã hủy</span>
+                <span class="badge badge-pending"   th:if="${b.status.name() == 'PENDING'}">Chờ xử lý</span>
 
-                <!-- CORE-09: Nut huy ve (chi hien khi CONFIRMED va chua chieu) -->
+                <!-- CORE-09: Nút hủy vé (chỉ hiển khi CONFIRMED và chưa chiếu) -->
                 <form th:if="${b.status.name() == 'CONFIRMED'}"
                       th:action="@{/booking/cancel/{id}(id=${b.id})}"
                       method="post" style="margin-top:8px;"
-                      onsubmit="return confirm('Ban co chac chan muon huy ve nay?')">
-                    <button type="submit" class="btn btn-danger" style="font-size:0.85rem;padding:4px 10px;">Huy ve</button>
+                      onsubmit="return confirm('Bạn có chắc chắn muốn hủy vé này?')">
+                    <button type="submit" class="btn btn-danger" style="font-size:0.85rem;padding:4px 10px;">Hủy vé</button>
                 </form>
             </div>
         </div>

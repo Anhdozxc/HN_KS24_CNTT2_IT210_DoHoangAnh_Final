@@ -2,7 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Dat ve thanh cong</title>
+    <title>Đặt vé thành công</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
@@ -10,31 +10,31 @@
 
 <div class="container" style="max-width:600px;">
     <div style="background:#fff;padding:30px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.1);text-align:center;">
-        <div style="font-size:3rem;margin-bottom:10px;">Dat ve thanh cong!</div>
-        <h2 style="margin-bottom:20px;color:#007700;">Ma don hang #<span th:text="${booking.id}"></span></h2>
+        <div style="font-size:3rem;margin-bottom:10px;">Đặt vé thành công!</div>
+        <h2 style="margin-bottom:20px;color:#007700;">Mã đơn hàng #<span th:text="${booking.id}"></span></h2>
 
-        <!-- Thong tin suat chieu -->
+        <!-- Thông tin suất chiếu -->
         <div style="text-align:left;background:#f9f9f9;padding:16px;border-radius:6px;margin-bottom:20px;">
             <p><strong>Phim:</strong> <span th:text="${booking.showtime.movie.title}"></span></p>
-            <p><strong>Phong:</strong> <span th:text="${booking.showtime.room.name}"></span></p>
-            <p><strong>Gio chieu:</strong>
+            <p><strong>Phòng:</strong> <span th:text="${booking.showtime.room.name}"></span></p>
+            <p><strong>Giờ chiếu:</strong>
                 <span th:text="${#temporals.format(booking.showtime.startTime, 'HH:mm dd/MM/yyyy')}"></span>
             </p>
-            <p style="margin-top:8px;"><strong>Ghe:</strong>
-                <!-- Lap danh sach ve de hien ten ghe -->
+            <p style="margin-top:8px;"><strong>Ghế:</strong>
+                <!-- Lặp danh sách vé để hiển tên ghế -->
                 <span th:each="t, iter : ${tickets}">
                     <span th:text="${t.seat.seatName}"></span><span th:if="${!iter.last}">, </span>
                 </span>
             </p>
             <p style="margin-top:8px;font-size:1.1rem;color:#e94560;">
-                <strong>Tong tien: </strong>
+                <strong>Tổng tiền: </strong>
                 <span th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VND'}"></span>
             </p>
         </div>
 
         <div style="display:flex;gap:12px;justify-content:center;">
-            <a href="/booking/history" class="btn btn-secondary">Xem lich su dat ve</a>
-            <a href="/" class="btn btn-primary">Ve trang chu</a>
+            <a href="/booking/history" class="btn btn-secondary">Xem lịch sử đặt vé</a>
+            <a href="/" class="btn btn-primary">Về trang chủ</a>
         </div>
     </div>
 </div>

@@ -2,44 +2,44 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Cinema Booking - Trang chu</title>
+    <title>Cinema Booking - Trang chủ</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
 <div th:replace="~{fragments/layout :: navbar}"></div>
 
 <div class="container">
-    <h1 style="margin-bottom:4px;">Phim dang chieu</h1>
-    <p style="color:#666;margin-bottom:20px;">Chon phim ban muon xem</p>
+    <h1 style="margin-bottom:4px;">Phim đang chiếu</h1>
+    <p style="color:#666;margin-bottom:20px;">Chọn phim bạn muốn xem</p>
 
-    <div class="alert alert-error" th:if="${param.error}">Ban khong co quyen truy cap trang nay.</div>
+    <div class="alert alert-error" th:if="${param.error}">Bạn không có quyền truy cập trang này.</div>
 
     <div class="movie-grid">
         <div class="movie-card" th:each="movie : ${movies}">
-            <!-- Link toi trang chi tiet phim -->
+            <!-- Link tới trang chi tiết phim -->
             <a th:href="@{/movie/{id}(id=${movie.id})}">
                 <img th:if="${movie.posterUrl != null}"
                      th:src="${movie.posterUrl}"
                      th:alt="${movie.title}"/>
-                <!-- Anh placeholder neu chua co poster -->
+                <!-- Ảnh placeholder nếu chưa có poster -->
                 <div th:if="${movie.posterUrl == null}"
                      style="width:100%;height:280px;background:#ddd;display:flex;align-items:center;justify-content:center;color:#999;">
-                    No Image
+                    Không có ảnh
                 </div>
             </a>
             <div class="card-body">
                 <div class="card-title" th:text="${movie.title}"></div>
                 <div class="card-genre" th:text="${movie.genre != null ? movie.genre.name : ''}"></div>
-                <div style="font-size:0.85rem;color:#555;margin-top:4px;" th:text="${movie.duration + ' phut'}"></div>
+                <div style="font-size:0.85rem;color:#555;margin-top:4px;" th:text="${movie.duration + ' phút'}"></div>
             </div>
             <div class="card-footer">
-                <a th:href="@{/movie/{id}(id=${movie.id})}" class="btn btn-primary" style="width:100%;text-align:center;display:block;">Xem suat chieu</a>
+                <a th:href="@{/movie/{id}(id=${movie.id})}" class="btn btn-primary" style="width:100%;text-align:center;display:block;">Xem suất chiếu</a>
             </div>
         </div>
     </div>
 
     <p th:if="${#lists.isEmpty(movies)}" style="color:#aaa;text-align:center;margin-top:40px;">
-        Hien tai chua co phim nao dang chieu.
+        Hiện tại chưa có phim nào đang chiếu.
     </p>
 </div>
 

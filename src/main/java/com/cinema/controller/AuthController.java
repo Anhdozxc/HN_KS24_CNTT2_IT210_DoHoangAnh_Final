@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import com.cinema.dto.LoginDTO;
 
 @Controller
 @RequestMapping("/auth")
@@ -17,23 +18,26 @@ public class AuthController {
 
     @Autowired private UserService userService;
 
-    // Hien thi trang dang nhap
+    // Hiển thi trang đăng nhập
     @GetMapping("/login")
-    public String loginPage() {
+    public String loginPage(Model model) {
+        model.addAttribute("dto", new LoginDTO());
         return "auth/login";
     }
 
-    // Xu ly dang nhap
+    // Xử lý đăng nhập
     @PostMapping("/login")
-    public String login(@RequestParam String username,
-                        @RequestParam String password,
+    public String login(@Valid @ModelAttribute("dto") LoginDTO dto,
+                        BindingResult result,
                         HttpSession session,
                         Model model) {
-        return userService.login(username, password)
+        if (result.hasErrors()) {
+            return "auth/login";
+        }
+
+        return userService.login(dto.getUsername(), dto.getPassword())
                 .map(user -> {
-                    // Luu user vao session
                     session.setAttribute("loggedUser", user);
-                    // Chuyen huong theo quyen
                     return switch (user.getRole()) {
                         case ADMIN -> "redirect:/admin/dashboard";
                         case STAFF -> "redirect:/staff/orders";
@@ -41,25 +45,25 @@ public class AuthController {
                     };
                 })
                 .orElseGet(() -> {
-                    model.addAttribute("error", "Sai ten dang nhap hoac mat khau");
+                    model.addAttribute("error", "Sai tên đăng nhập hoặc mật khẩu");
                     return "auth/login";
                 });
     }
 
-    // Hien thi trang dang ky
+    // Hiển thi trang đăng ký
     @GetMapping("/register")
     public String registerPage(Model model) {
         model.addAttribute("dto", new RegisterDTO());
         return "auth/register";
     }
 
-    // Xu ly dang ky
+    // Xử lý đăng ký
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute("dto") RegisterDTO dto,
                            BindingResult result,
                            Model model) {
         if (result.hasErrors()) {
-            return "auth/register";  // Tra ve form neu co loi validation
+            return "auth/register";  // Trả về form nếu có lỗi validation
         }
         try {
             userService.register(dto);
@@ -70,10 +74,10 @@ public class AuthController {
         }
     }
 
-    // Dang xuat
+    // Đăng xuất
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.invalidate();  // Xoa session
+        session.invalidate();  // Xóa session
         return "redirect:/auth/login?success=logout";
     }
 }

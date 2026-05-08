@@ -30,6 +30,6 @@ public class User {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     // Lien ket 1-1 voi UserProfile
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserProfile profile;
 }

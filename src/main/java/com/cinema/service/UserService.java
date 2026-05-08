@@ -19,20 +19,20 @@ public class UserService {
 
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    // CORE-01: Dang ky tai khoan
+    // CORE-01: Đăng ký tài khoản
     @Transactional
     public void register(RegisterDTO dto) {
         if (userRepository.existsByUsername(dto.getUsername())) {
-            throw new RuntimeException("Ten dang nhap da ton tai");
+            throw new RuntimeException("Tên đăng nhập đã tồn tại");
         }
         if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException("Email da duoc su dung");
+            throw new RuntimeException("Email đã được sử dụng");
         }
 
         User user = new User();
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
-        user.setPassword(encoder.encode(dto.getPassword()));  // HASH mat khau
+        user.setPassword(encoder.encode(dto.getPassword()));  // HASH mật khẩu
         userRepository.save(user);
 
         UserProfile profile = new UserProfile();
@@ -41,7 +41,7 @@ public class UserService {
         profileRepository.save(profile);
     }
 
-    // CORE-01: Dang nhap - tra ve User neu dung, null neu sai
+    // CORE-01: Đăng nhập - trả về User nếu đúng, null nếu sai
     public Optional<User> login(String username, String rawPassword) {
         return userRepository.findByUsername(username)
                 .filter(u -> encoder.matches(rawPassword, u.getPassword()));

@@ -10,44 +10,44 @@
 
 <div class="container">
     <div class="page-header">
-        <!-- Neu dto.id != null -> dang sua, nguoc lai -> dang tao moi -->
-        <h1 th:text="${dto.id != null ? 'Sua phim' : 'Them phim moi'}">Form Phim</h1>
-        <a href="/admin/movies" class="btn btn-secondary">Quay lai</a>
+        <!-- Nếu dto.id != null -> đang sửa, ngược lại -> đang tạo mới -->
+        <h1 th:text="${dto.id != null ? 'Sửa phim' : 'Thêm phim mới'}">Form Phim</h1>
+        <a href="/admin/movies" class="btn btn-secondary">Quay lại</a>
     </div>
 
     <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
 
-    <!-- enctype multipart/form-data de upload file anh -->
+    <!-- enctype multipart/form-data để upload file ảnh -->
     <form method="post" action="/admin/movies/save"
           enctype="multipart/form-data"
           th:object="${dto}"
           style="background:#fff;padding:24px;border-radius:8px;max-width:600px;box-shadow:0 2px 8px rgba(0,0,0,.08);">
 
-        <!-- Field an: truyen id khi sua -->
+        <!-- Field ẩn: truyền id khi sửa -->
         <input type="hidden" th:field="*{id}"/>
 
         <div class="form-group">
-            <label>Ten phim *</label>
+            <label>Tên phim *</label>
             <input type="text" th:field="*{title}"/>
             <span class="error-msg" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
         </div>
 
         <div class="form-group">
-            <label>Mo ta</label>
+            <label>Mô tả</label>
             <textarea th:field="*{description}"></textarea>
         </div>
 
         <div class="form-group">
-            <label>Thoi luong (phut) *</label>
+            <label>Thời lượng (phút) *</label>
             <input type="number" th:field="*{duration}" min="1"/>
             <span class="error-msg" th:if="${#fields.hasErrors('duration')}" th:errors="*{duration}"></span>
         </div>
 
         <div class="form-group">
-            <label>The loai *</label>
+            <label>Thể loại *</label>
             <select th:field="*{genreId}">
-                <option value="">-- Chon the loai --</option>
-                <!-- Vong lap render option, selected tu dong theo genreId -->
+                <option value="">-- Chọn thể loại --</option>
+                <!-- Vòng lặp render option, selected tự động theo genreId -->
                 <option th:each="g : ${genres}"
                         th:value="${g.id}"
                         th:text="${g.name}"></option>
@@ -56,22 +56,22 @@
         </div>
 
         <div class="form-group">
-            <label>Ngay phat hanh</label>
+            <label>Ngày phát hành</label>
             <input type="date" th:field="*{releaseDate}"/>
         </div>
 
         <div class="form-group">
-            <label>Poster (anh phim)</label>
-            <!-- Hien anh cu neu dang sua -->
+            <label>Poster (ảnh phim)</label>
+            <!-- Hiển ảnh cũ nếu đang sửa -->
             <div th:if="${movie != null and movie.posterUrl != null}" style="margin-bottom:8px;">
                 <img th:src="${movie.posterUrl}" style="width:80px;height:110px;object-fit:cover;border-radius:4px;"/>
-                <p style="font-size:0.8rem;color:#666;margin-top:4px;">Anh hien tai. Chon anh moi de thay the.</p>
+                <p style="font-size:0.8rem;color:#666;margin-top:4px;">Ảnh hiện tại. Chọn ảnh mới để thay thế.</p>
             </div>
-            <!-- name="posterFile" phai khop voi ten field trong MovieDTO -->
+            <!-- name="posterFile" phải khớp với tên field trong MovieDTO -->
             <input type="file" name="posterFile" accept="image/*"/>
         </div>
 
-        <button type="submit" class="btn btn-primary">Luu</button>
+        <button type="submit" class="btn btn-primary">Lưu</button>
     </form>
 </div>
 

@@ -2,7 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Quan ly phim</title>
+    <title>Quản lý phim</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
@@ -10,11 +10,11 @@
 
 <div class="container">
     <div class="page-header">
-        <h1>Danh sach phim</h1>
-        <a href="/admin/movies/new" class="btn btn-primary">+ Them phim moi</a>
+        <h1>Danh sách phim</h1>
+        <a href="/admin/movies/new" class="btn btn-primary">+ Thêm phim mới</a>
     </div>
 
-    <div class="alert alert-success" th:if="${param.success}">Thao tac thanh cong!</div>
+    <div class="alert alert-success" th:if="${param.success}">Thao tác thành công!</div>
 
     <div class="table-wrap">
         <table>
@@ -22,19 +22,19 @@
             <tr>
                 <th>#</th>
                 <th>Poster</th>
-                <th>Ten phim</th>
-                <th>The loai</th>
-                <th>Thoi luong</th>
-                <th>Trang thai</th>
-                <th>Hanh dong</th>
+                <th>Tên phim</th>
+                <th>Thể loại</th>
+                <th>Thời lượng</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
             </tr>
             </thead>
             <tbody>
-            <!-- th:each: lap danh sach phim -->
+            <!-- th:each: lặp danh sách phim -->
             <tr th:each="movie : ${movies}">
                 <td th:text="${movie.id}"></td>
                 <td>
-                    <!-- Hien anh poster neu co, neu khong hien chu "No image" -->
+                    <!-- Hiển ảnh poster nếu có, nếu không hiển chữ "No image" -->
                     <img th:if="${movie.posterUrl != null}"
                          th:src="${movie.posterUrl}"
                          style="width:50px;height:70px;object-fit:cover;border-radius:3px;"/>
@@ -42,23 +42,23 @@
                 </td>
                 <td th:text="${movie.title}"></td>
                 <td th:text="${movie.genre != null ? movie.genre.name : '-'}"></td>
-                <td th:text="${movie.duration + ' phut'}"></td>
+                <td th:text="${movie.duration + ' phút'}"></td>
                 <td>
-                    <span class="badge badge-confirmed" th:if="${movie.active}">Hien</span>
-                    <span class="badge badge-cancelled" th:if="${!movie.active}">An</span>
+                    <span class="badge badge-confirmed" th:if="${movie.active}">Hiển</span>
+                    <span class="badge badge-cancelled" th:if="${!movie.active}">Ẩn</span>
                 </td>
                 <td>
-                    <a th:href="@{/admin/movies/edit/{id}(id=${movie.id})}" class="btn btn-secondary" style="padding:4px 10px;font-size:0.85rem;">Sua</a>
-                    <!-- Form POST de xoa (khong dung link GET cho thao tac xoa) -->
+                    <a th:href="@{/admin/movies/edit/{id}(id=${movie.id})}" class="btn btn-secondary" style="padding:4px 10px;font-size:0.85rem;">Sửa</a>
+                    <!-- Form POST để xóa (không dùng link GET cho thao tác xóa) -->
                     <form th:action="@{/admin/movies/delete/{id}(id=${movie.id})}"
                           method="post" style="display:inline;"
-                          onsubmit="return confirm('An phim nay khoi danh sach?')">
-                        <button type="submit" class="btn btn-danger" style="padding:4px 10px;font-size:0.85rem;">An</button>
+                          onsubmit="return confirm('Ẩn phim này khỏi danh sách?')">
+                        <button type="submit" class="btn btn-danger" style="padding:4px 10px;font-size:0.85rem;">Ẩn</button>
                     </form>
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(movies)}">
-                <td colspan="7" style="text-align:center;color:#aaa;">Chua co phim nao</td>
+                <td colspan="7" style="text-align:center;color:#aaa;">Chưa có phim nào</td>
             </tr>
             </tbody>
         </table>

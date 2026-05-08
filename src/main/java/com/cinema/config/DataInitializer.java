@@ -30,29 +30,29 @@ public class DataInitializer implements ApplicationRunner {
         seedAdminUser();
     }
 
-    // Seed the loai phim
+    // Seed the loại phim
     private void seedGenres() {
         if (genreRepository.count() > 0) return;
         List<Genre> genres = List.of(
-                genre("Hanh Dong"), genre("Kinh Di"), genre("Tinh Cam"),
-                genre("Hoat Hinh"), genre("Hai Huoc"), genre("Vien Tuong")
+                genre("Hành Động"), genre("Kinh Dị"), genre("Tình Cảm"),
+                genre("Hoạt Hình"), genre("Hài Hước"), genre("Viễn Tưởng")
         );
         genreRepository.saveAll(genres);
     }
 
-    // Tao 3 phong chieu va ghe ngoi
+    // Tạo 3 phòng chiếu và ghế ngồi
     private void seedRooms() {
         if (roomRepository.count() > 0) return;
 
-        // Phong 1: 30 ghe (A-C, so 1-10)
-        createRoom("Phong 1", List.of("A", "B", "C"), 10);
-        // Phong 2: 40 ghe (A-D, so 1-10)
-        createRoom("Phong 2", List.of("A", "B", "C", "D"), 10);
-        // Phong 3: 50 ghe (A-E, so 1-10)
-        createRoom("Phong 3", List.of("A", "B", "C", "D", "E"), 10);
+        // Phòng 1: 30 ghế (A-C, số 1-10)
+        createRoom("Phòng 1", List.of("A", "B", "C"), 10);
+        // Phòng 2: 40 ghế (A-D, số 1-10)
+        createRoom("Phòng 2", List.of("A", "B", "C", "D"), 10);
+        // Phòng 3: 50 ghế (A-E, số 1-10)
+        createRoom("Phòng 3", List.of("A", "B", "C", "D", "E"), 10);
     }
 
-    // Tao admin mac dinh (username: admin, password: admin123)
+    // Tạo admin mặc định (username: admin, password: admin123)
     private void seedAdminUser() {
         if (userRepository.existsByUsername("admin")) return;
 
@@ -65,10 +65,10 @@ public class DataInitializer implements ApplicationRunner {
 
         UserProfile profile = new UserProfile();
         profile.setUser(admin);
-        profile.setFullName("Quan tri vien");
+        profile.setFullName("Quản trị viên");
         profileRepository.save(profile);
 
-        // Tao nhan vien mau
+        // Tạo nhân viên mẫu
         User staff = new User();
         staff.setUsername("staff");
         staff.setEmail("staff@cinema.com");
@@ -78,11 +78,11 @@ public class DataInitializer implements ApplicationRunner {
 
         UserProfile staffProfile = new UserProfile();
         staffProfile.setUser(staff);
-        staffProfile.setFullName("Nhan vien rap");
+        staffProfile.setFullName("Nhân viên rạp");
         profileRepository.save(staffProfile);
     }
 
-    // Helper: tao phong + ghe
+    // Helper: tạo phòng + ghế
     private void createRoom(String name, List<String> rows, int cols) {
         Room room = new Room();
         room.setName(name);

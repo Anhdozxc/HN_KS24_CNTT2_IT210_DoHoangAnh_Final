@@ -2,7 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Chon ghe</title>
+    <title>Chọn ghế</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
@@ -11,34 +11,34 @@
 <div class="container">
     <h1 style="margin-bottom:4px;" th:text="${showtime.movie.title}"></h1>
     <p style="color:#666;margin-bottom:20px;"
-       th:text="${showtime.room.name + ' | ' + #temporals.format(showtime.startTime, 'HH:mm dd/MM/yyyy') + ' | ' + #numbers.formatDecimal(showtime.price, 0, 'COMMA', 0, 'POINT') + ' VND/ghe'}">
+       th:text="${showtime.room.name + ' | ' + #temporals.format(showtime.startTime, 'HH:mm dd/MM/yyyy') + ' | ' + #numbers.formatDecimal(showtime.price, 0, 'COMMA', 0, 'POINT') + ' VND/ghế'}">
     </p>
 
-    <!-- Thong bao loi (ghe bi dat mat) -->
+    <!-- Thông báo lỗi (ghế bị đặt mất) -->
     <div class="alert alert-error" th:if="${param.error}" th:text="${param.error}"></div>
 
-    <!-- Chu thich mau ghe -->
+    <!-- Chú thích màu ghế -->
     <div class="seat-legend">
         <div class="legend-item">
-            <div class="legend-box" style="border:2px solid #0066cc;"></div> Con trong
+            <div class="legend-box" style="border:2px solid #0066cc;"></div> Còn trống
         </div>
         <div class="legend-item">
-            <div class="legend-box" style="background:#0066cc;"></div> Dang chon
+            <div class="legend-box" style="background:#0066cc;"></div> Đang chọn
         </div>
         <div class="legend-item">
-            <div class="legend-box" style="background:#ccc;border:2px solid #999;"></div> Da dat
+            <div class="legend-box" style="background:#ccc;border:2px solid #999;"></div> Đã đặt
         </div>
     </div>
 
-    <!-- Man hinh chieu -->
-    <div class="screen" style="margin-top:16px;">--- MAN HINH ---</div>
+    <!-- Màn hình chiếu -->
+    <div class="screen" style="margin-top:16px;">--- MÀN HÌNH ---</div>
 
-    <!-- So do ghe -->
+    <!-- Sơ đồ ghế -->
     <div class="seat-grid" id="seatGrid">
-        <!-- Nhom ghe theo hang (lay ky tu dau ten ghe: A1->A, B1->B...) -->
-        <!-- Dung Thymeleaf groupBy hoac xu ly theo index -->
+        <!-- Nhóm ghế theo hàng (lấy ký tự đầu tên ghế: A1->A, B1->B...) -->
+        <!-- Dùng Thymeleaf groupBy hoặc xử lý theo index -->
         <div th:each="seat : ${seats}" style="display:inline;">
-            <!-- Dat id la seat-{id} de JS xu ly -->
+            <!-- Đặt id là seat-{id} để JS xử lý -->
             <span th:id="'seat-' + ${seat.id}"
                   th:attr="data-id=${seat.id}, data-name=${seat.seatName}"
                   th:classappend="${bookedSeatIds.contains(seat.id)} ? ' booked' : ''"
@@ -49,59 +49,59 @@
         </div>
     </div>
 
-    <!-- Form dat ve -->
+    <!-- Form đặt vé -->
     <form method="post" action="/booking/create" id="bookingForm" style="margin-top:24px;">
         <input type="hidden" name="showtimeId" th:value="${showtime.id}"/>
-        <!-- JS se them input seatIds[] vao day -->
+        <!-- JS sẽ thêm input seatIds[] vào đây -->
         <div id="selectedSeatsInput"></div>
 
         <div class="booking-summary">
-            <div>Ghe da chon: <strong id="selectedNames">Chua chon</strong></div>
-            <div>So luong: <strong id="seatCount">0</strong> ghe</div>
-            <div class="total" id="totalPrice">Tong tien: 0 VND</div>
+            <div>Ghế đã chọn: <strong id="selectedNames">Chưa chọn</strong></div>
+            <div>Số lượng: <strong id="seatCount">0</strong> ghế</div>
+            <div class="total" id="totalPrice">Tổng tiền: 0 VND</div>
         </div>
 
         <button type="submit" class="btn btn-primary" style="margin-top:16px;padding:10px 30px;"
-                onclick="return validateSeats()">Xac nhan dat ve</button>
-        <a href="javascript:history.back()" class="btn btn-secondary" style="margin-left:10px;">Quay lai</a>
+                onclick="return validateSeats()">Xác nhận đặt vé</button>
+        <a href="javascript:history.back()" class="btn btn-secondary" style="margin-left:10px;">Quay lại</a>
     </form>
 </div>
 
 <script th:inline="javascript">
-    // Lay gia ve tu Thymeleaf truyen sang JS
+    // Lấy giá vé từ Thymeleaf truyền sang JS
     const price = [[${showtime.price}]];
-    let selected = [];  // Mang chua id ghe dang chon
+    let selected = [];  // Mảng chứa id ghế đang chọn
 
-    // Bat/tat chon ghe
+    // Bật/tắt chọn ghế
     function toggleSeat(el) {
-        if (el.classList.contains('booked')) return;  // Ghe da dat, khong cho chon
+        if (el.classList.contains('booked')) return;  // Ghế đã đặt, không cho chọn
 
         const id = el.dataset.id;
         const name = el.dataset.name;
 
         if (el.classList.contains('selected')) {
-            // Bo chon
+            // Bỏ chọn
             el.classList.remove('selected');
             selected = selected.filter(s => s.id !== id);
         } else {
-            // Chon ghe
+            // Chọn ghế
             el.classList.add('selected');
             selected.push({ id, name });
         }
         updateSummary();
     }
 
-    // Cap nhat tong tien va danh sach ghe chon
+    // Cập nhật tổng tiền và danh sách ghế chọn
     function updateSummary() {
         document.getElementById('seatCount').textContent = selected.length;
         document.getElementById('selectedNames').textContent =
-            selected.length > 0 ? selected.map(s => s.name).join(', ') : 'Chua chon';
+            selected.length > 0 ? selected.map(s => s.name).join(', ') : 'Chưa chọn';
 
         const total = selected.length * price;
         document.getElementById('totalPrice').textContent =
-            'Tong tien: ' + total.toLocaleString('vi-VN') + ' VND';
+            'Tổng tiền: ' + total.toLocaleString('vi-VN') + ' VND';
 
-        // Xoa input cu, them moi vao form
+        // Xóa input cũ, thêm mới vào form
         const container = document.getElementById('selectedSeatsInput');
         container.innerHTML = '';
         selected.forEach(s => {
@@ -113,10 +113,10 @@
         });
     }
 
-    // Kiem tra truoc khi submit
+    // Kiểm tra trước khi submit
     function validateSeats() {
         if (selected.length === 0) {
-            alert('Vui long chon it nhat 1 ghe!');
+            alert('Vui lòng chọn ít nhất 1 ghế!');
             return false;
         }
         return true;
