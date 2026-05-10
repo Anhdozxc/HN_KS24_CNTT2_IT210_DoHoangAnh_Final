@@ -42,12 +42,12 @@
             <!-- Chỉ hiển nút đặt vé nếu còn ghế và đã đăng nhập -->
             <a th:if="${!soldOutMap[s.id] and session.loggedUser != null and session.loggedUser.role.name() == 'CUSTOMER'}"
                th:href="@{/booking/seats/{id}(id=${s.id})}"
-               class="btn btn-primary" style="display:block;margin-top:6px;text-align:center;">Đặt vé</a>
+               class="btn btn-primary">Đặt vé</a>
 
-            <!-- Chưa đăng nhập thì mới đăng nhập -->
+            <!-- Chưa đăng nhập thì mời đăng nhập -->
             <a th:if="${session.loggedUser == null}"
                href="/auth/login"
-               class="btn btn-secondary" style="display:block;margin-top:6px;text-align:center;font-size:0.85rem;">Đăng nhập để đặt</a>
+               class="btn btn-secondary">Đăng nhập để đặt</a>
         </div>
     </div>
 </div>
