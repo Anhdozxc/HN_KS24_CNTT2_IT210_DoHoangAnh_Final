@@ -39,6 +39,7 @@ public class BookingController {
         // Lay tat ca ghe cua phong
         model.addAttribute("seats", showtime.getRoom().getSeats());
         model.addAttribute("bookedSeatIds", bookedSeatIds);
+        model.addAttribute("isSoldOut", bookingService.isSoldOut(showtime));
         return "customer/seats";
     }
 

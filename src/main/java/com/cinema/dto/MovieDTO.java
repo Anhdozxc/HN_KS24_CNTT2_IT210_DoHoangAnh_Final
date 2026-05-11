@@ -13,15 +13,15 @@ public class MovieDTO {
 
     private Long id;  // null khi tao moi, co gia tri khi sua
 
-    @NotBlank(message = "Ten phim khong duoc trong")
+    @NotBlank(message = "Tên phim không được để trống")
     private String title;
 
     private String description;
 
-    @Min(value = 1, message = "Thoi luong phai lon hon 0")
+    @Min(value = 1, message = "Thời lượng phải lớn hơn 0")
     private int duration;
 
-    @NotNull(message = "Vui long chon the loai")
+    @NotNull(message = "Vui lòng chọn thể loại")
     private Long genreId;
 
     private LocalDate releaseDate;

@@ -36,10 +36,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "JOIN FETCH s.room " +
             "WHERE b.id = :id")
     java.util.Optional<Booking> findByIdWithDetails(@Param("id") Long id);
-
+    // Query 1: Tổng doanh thu
     @Query("SELECT COALESCE(SUM(b.totalPrice), 0) FROM Booking b WHERE b.status = :status")
     BigDecimal getTotalRevenueByStatus(@Param("status") BookingStatus status);
-
+    // Query 2: Top phim (GROUP BY + ORDER BY doanh thu)
     @Query("SELECT s.movie.title AS movieTitle, COALESCE(SUM(b.totalPrice), 0) AS revenue, COUNT(b) AS confirmedBookings " +
             "FROM Booking b " +
             "JOIN b.showtime s " +

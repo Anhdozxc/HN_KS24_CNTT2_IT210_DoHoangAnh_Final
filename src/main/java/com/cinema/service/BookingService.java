@@ -54,6 +54,16 @@ public class BookingService {
         Showtime showtime = showtimeRepository.findById(dto.getShowtimeId())
                 .orElseThrow(() -> new RuntimeException("Suat chieu khong ton tai"));
 
+        //  Chặn đặt vé khi suất đã quá giờ
+        if (showtime.getStartTime().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Suat chieu nay da ket thuc, khong the dat ve.");
+        }
+
+        //  Chặn đặt vé khi hết vé
+        if (isSoldOut(showtime)) {
+            throw new RuntimeException("Suat chieu nay da het ve.");
+        }
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Nguoi dung khong ton tai"));
 
