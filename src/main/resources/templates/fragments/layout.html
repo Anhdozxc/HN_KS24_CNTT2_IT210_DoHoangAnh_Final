@@ -9,55 +9,82 @@
 </head>
 <body>
 
-<!-- THANH ĐIỀU HƯỚNG (dùng th:fragment để nhúc vào trang khác) -->
+<!-- NAVBAR - Dark mode, sticky top ===== -->
 <nav th:fragment="navbar">
     <div class="navbar">
+        <!-- Logo / Brand -->
         <a href="/" class="logo">CinemaBooking</a>
 
+        <!-- Navigation Links -->
         <div class="nav-links">
-            <!-- Hiển link theo quyền -->
-            <a href="/" >Trang chủ</a>
+            <a href="/">Trang chủ</a>
 
-            <!-- Nếu đăng nhập -->
-            <div th:if="${session.loggedUser != null}">
+            <!-- ADMIN - Quản lý hệ thống -->
+            <span th:if="${session.loggedUser != null && session.loggedUser.role.name() == 'ADMIN'}">
+                <a href="/admin/dashboard">Dashboard</a>
+                <a href="/admin/movies">Quản lý phim</a>
+                <a href="/admin/showtimes">Suất chiếu</a>
+            </span>
 
-                <!-- Admin -->
-                <span th:if="${session.loggedUser.role.name() == 'ADMIN'}">
-                    <a href="/admin/dashboard">Dashboard</a>
-                    <a href="/admin/movies">Quản lý phim</a>
-                    <a href="/admin/showtimes">Suất chiếu</a>
-                </span>
+            <!-- STAFF - Hỗ trợ khách hàng -->
+            <span th:if="${session.loggedUser != null && session.loggedUser.role.name() == 'STAFF'}">
+                <a href="/staff/orders">Tra cứu vé</a>
+            </span>
 
-                <!-- Staff -->
-                <span th:if="${session.loggedUser.role.name() == 'STAFF'}">
-                    <a href="/staff/orders">Tra cứu vé</a>
-                </span>
+            <!-- CUSTOMER - Người dùng bình thường -->
+            <span th:if="${session.loggedUser != null && session.loggedUser.role.name() == 'CUSTOMER'}">
+                <a href="/booking/history">Lịch sử đặt vé</a>
+            </span>
 
-                <!-- Customer -->
-                <span th:if="${session.loggedUser.role.name() == 'CUSTOMER'}">
-                    <a href="/booking/history">Lịch sử đặt vé</a>
-                </span>
-
+            <!-- Người dùng đã đăng nhập: Hồ sơ + Đăng xuất -->
+            <span th:if="${session.loggedUser != null}">
                 <a href="/profile/edit">Hồ sơ</a>
-
-                <!-- Hiển tên user -->
-                <span class="username" th:text="'Xin chào, ' + ${session.loggedUser.username}"></span>
+                <span class="username" th:text="${session.loggedUser.username}"></span>
                 <a href="/auth/logout" class="btn-logout">Đăng xuất</a>
-            </div>
+            </span>
 
-            <!-- Chưa đăng nhập -->
-            <div th:if="${session.loggedUser == null}">
+            <!-- Chưa đăng nhập: Đăng nhập + Đăng ký -->
+            <span th:if="${session.loggedUser == null}">
                 <a href="/auth/login">Đăng nhập</a>
                 <a href="/auth/register">Đăng ký</a>
-            </div>
+            </span>
         </div>
     </div>
 </nav>
 
-<!-- FOOTER -->
+<!-- FOOTER - Dark mode, nhiều thông tin ===== -->
 <footer th:fragment="footer">
     <div class="footer">
-        <p>Cinema Booking System - Java Web Application</p>
+        <!-- Footer Content: 3 cột (Company, Contact, Info) -->
+        <div class="footer-content">
+            <!-- Cột 1: Về hệ thống -->
+            <div class="footer-section">
+                <h4>Về chúng tôi</h4>
+                <p>Cinema Booking System - Ứng dụng web đặt vé xem phim hiện đại.</p>
+                <p style="margin-top: 8px; font-size: 0.8rem;">Phát triển bằng Spring Boot + Thymeleaf</p>
+            </div>
+
+            <!-- Cột 2: Liên hệ -->
+            <div class="footer-section">
+                <h4>Liên hệ</h4>
+                <p>Email: support@cinemabooking.vn</p>
+                <p>Hotline: 1900 2023</p>
+                <p>Giờ hỗ trợ: 8:00 - 22:00 hàng ngày</p>
+            </div>
+
+            <!-- Cột 3: Thông tin khác -->
+            <div class="footer-section">
+                <h4>Thông tin</h4>
+                <p><a href="#">Điều khoản sử dụng</a></p>
+                <p><a href="#">Chính sách bảo mật</a></p>
+                <p><a href="#">Hỗ trợ kỹ thuật</a></p>
+            </div>
+        </div>
+
+        <!-- Footer Bottom: Bản quyền -->
+        <div class="footer-bottom">
+            <p>&copy; 2024 Cinema Booking. All rights reserved. | Designed for Education Purpose</p>
+        </div>
     </div>
 </footer>
 

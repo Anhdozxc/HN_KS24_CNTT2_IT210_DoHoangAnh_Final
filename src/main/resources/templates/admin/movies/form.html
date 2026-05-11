@@ -17,11 +17,11 @@
 
     <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
 
-    <!-- enctype multipart/form-data để upload file ảnh -->
+    <!-- Form tối, dễ nhìn -->
     <form method="post" action="/admin/movies/save"
           enctype="multipart/form-data"
           th:object="${dto}"
-          style="background:#fff;padding:24px;border-radius:8px;max-width:600px;box-shadow:0 2px 8px rgba(0,0,0,.08);">
+          class="panel-card form-panel">
 
         <!-- Field ẩn: truyền id khi sửa -->
         <input type="hidden" th:field="*{id}"/>
@@ -47,7 +47,7 @@
             <label>Thể loại *</label>
             <select th:field="*{genreId}">
                 <option value="">-- Chọn thể loại --</option>
-                <!-- Vòng lặp render option, selected tự động theo genreId -->
+                <!-- Lặp danh mục thể loại -->
                 <option th:each="g : ${genres}"
                         th:value="${g.id}"
                         th:text="${g.name}"></option>
@@ -62,10 +62,10 @@
 
         <div class="form-group">
             <label>Poster (ảnh phim)</label>
-            <!-- Hiển ảnh cũ nếu đang sửa -->
+            <!-- Hiển thị ảnh cũ nếu đang sửa -->
             <div th:if="${movie != null and movie.posterUrl != null}" style="margin-bottom:8px;">
                 <img th:src="${movie.posterUrl}" style="width:80px;height:110px;object-fit:cover;border-radius:4px;"/>
-                <p style="font-size:0.8rem;color:#666;margin-top:4px;">Ảnh hiện tại. Chọn ảnh mới để thay thế.</p>
+                <p style="font-size:0.8rem;color:#a0a0a0;margin-top:4px;">Ảnh hiện tại. Chọn ảnh mới để thay thế.</p>
             </div>
             <!-- name="posterFile" phải khớp với tên field trong MovieDTO -->
             <input type="file" name="posterFile" accept="image/*"/>

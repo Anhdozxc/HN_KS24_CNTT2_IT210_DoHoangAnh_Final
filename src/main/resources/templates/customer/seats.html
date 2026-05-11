@@ -2,79 +2,125 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Chọn ghế</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Chọn ghế - Cinema Booking</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
 <div th:replace="~{fragments/layout :: navbar}"></div>
 
-<div class="container">
-    <h1 style="margin-bottom:4px;" th:text="${showtime.movie.title}"></h1>
-    <p style="color:#666;margin-bottom:20px;"
-       th:text="${showtime.room.name + ' | ' + #temporals.format(showtime.startTime, 'HH:mm dd/MM/yyyy') + ' | ' + #numbers.formatDecimal(showtime.price, 0, 'COMMA', 0, 'POINT') + ' VND/ghế'}">
+<div class="container" style="max-width: 900px;">
+    <!-- Tiêu đề phim + thông tin suất chiếu -->
+    <h1 class="section-title" th:text="${showtime.movie.title}">Tên Phim</h1>
+    <p class="section-subtitle">
+        <span th:text="${showtime.room.name}">Phòng A</span> •
+        <span th:text="${#temporals.format(showtime.startTime, 'HH:mm - dd/MM/yyyy')}">10:30 - 01/01/2024</span> •
+        <span th:text="${#numbers.formatDecimal(showtime.price, 0, 'COMMA', 0, 'POINT') + ' VND/ghế'}">150,000 VND/ghế</span>
     </p>
 
-    <!-- Thông báo lỗi (ghế bị đặt mất) -->
+    <!-- Thông báo lỗi (ghế xung đột) -->
     <div class="alert alert-error" th:if="${param.error}" th:text="${param.error}"></div>
+
+    <!-- CORE-08: Thông báo HẾT VÉ lớn + thân thiện -->
+    <div th:if="${isSoldOut}">
+        <div class="alert alert-warning">
+            <strong>Suất chiếu này đã hết vé!</strong> Bạn vẫn có thể xem sơ đồ ghế, nhưng không thể đặt vé cho suất này. Vui lòng chọn suất chiếu khác.
+        </div>
+        <div class="sold-out-label">HẾT VÉ</div>
+    </div>
 
     <!-- Chú thích màu ghế -->
     <div class="seat-legend">
         <div class="legend-item">
-            <div class="legend-box" style="border:2px solid #0066cc;"></div> Còn trống
+            <div class="legend-box" style="border: 2px solid #4fa3d1; background: #1a1a2e;"></div>
+            <span>Còn trống</span>
         </div>
         <div class="legend-item">
-            <div class="legend-box" style="background:#0066cc;"></div> Đang chọn
+            <div class="legend-box" style="background: #ff6b6b; border: 2px solid #ff5252;"></div>
+            <span>Đang chọn</span>
         </div>
         <div class="legend-item">
-            <div class="legend-box" style="background:#ccc;border:2px solid #999;"></div> Đã đặt
+            <div class="legend-box" style="background: #505060; border: 2px solid #707080;"></div>
+            <span>Đã đặt</span>
         </div>
     </div>
 
-    <!-- Màn hình chiếu -->
-    <div class="screen" style="margin-top:16px;">--- MÀN HÌNH ---</div>
+    <!-- Màn hình chiếu (lớn, nổi bật) -->
+    <div class="screen">━━━━━━━ MÀN HÌNH ━━━━━━━</div>
 
-    <!-- Sơ đồ ghế -->
+    <!-- Sơ đồ ghế - Grid layout (không hàng dọc thẳng) -->
     <div class="seat-grid" id="seatGrid">
-        <!-- Nhóm ghế theo hàng (lấy ký tự đầu tên ghế: A1->A, B1->B...) -->
-        <!-- Dùng Thymeleaf groupBy hoặc xử lý theo index -->
-        <div th:each="seat : ${seats}" style="display:inline;">
-            <!-- Đặt id là seat-{id} để JS xử lý -->
+        <!-- JS sẽ tạo layout grid responsive từ danh sách ghế -->
+        <div th:each="seat : ${seats}" style="display: inline-block;">
             <span th:id="'seat-' + ${seat.id}"
                   th:attr="data-id=${seat.id}, data-name=${seat.seatName}"
                   th:classappend="${bookedSeatIds.contains(seat.id)} ? ' booked' : ''"
                   class="seat"
                   th:text="${seat.seatName}"
-                  onclick="toggleSeat(this)">
+                  th:onclick="${isSoldOut} ? 'return false' : 'toggleSeat(this)'">
             </span>
         </div>
     </div>
 
     <!-- Form đặt vé -->
-    <form method="post" action="/booking/create" id="bookingForm" style="margin-top:24px;">
+    <form method="post" action="/booking/create" id="bookingForm" style="margin-top: 24px;">
         <input type="hidden" name="showtimeId" th:value="${showtime.id}"/>
-        <!-- JS sẽ thêm input seatIds[] vào đây -->
         <div id="selectedSeatsInput"></div>
 
+        <!-- Tóm tắt đặt vé -->
         <div class="booking-summary">
-            <div>Ghế đã chọn: <strong id="selectedNames">Chưa chọn</strong></div>
-            <div>Số lượng: <strong id="seatCount">0</strong> ghế</div>
-            <div class="total" id="totalPrice">Tổng tiền: 0 VND</div>
+            <div>
+                <strong>Ghế đã chọn:</strong>
+                <span id="selectedNames" style="color: #4fa3d1;">Chưa chọn</span>
+            </div>
+            <div>
+                <strong>Số lượng:</strong>
+                <span id="seatCount" style="color: #33cc33;">0</span> ghế
+            </div>
+            <div class="total">
+                Tổng tiền: <span id="totalPrice" style="color: #ff6b6b;">0 VND</span>
+            </div>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="margin-top:16px;padding:10px 30px;"
-                onclick="return validateSeats()">Xác nhận đặt vé</button>
-        <a href="javascript:history.back()" class="btn btn-secondary" style="margin-left:10px;">Quay lại</a>
+        <!-- Nút hành động -->
+        <div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
+            <button type="submit" class="btn btn-primary"
+                    th:disabled="${isSoldOut}"
+                    onclick="return validateSeats()"
+                    style="flex: 1; padding: 12px 24px; font-size: 1rem;">
+                <span th:if="${isSoldOut}">Suất chiếu này đã hết vé</span>
+                <span th:unless="${isSoldOut}">Xác nhận đặt vé</span>
+            </button>
+            <a href="javascript:history.back()" class="btn btn-secondary" style="padding: 12px 24px;">Quay lại</a>
+        </div>
     </form>
 </div>
 
+<!-- ===== JAVASCRIPT CHO GHẾ ===== -->
 <script th:inline="javascript">
-    // Lấy giá vé từ Thymeleaf truyền sang JS
+    // Lấy giá vé từ server
     const price = [[${showtime.price}]];
-    let selected = [];  // Mảng chứa id ghế đang chọn
+    const isSoldOut = [[${isSoldOut}]];
+    let selected = [];  // Mảng chứa id + name của ghế đang chọn
+
+    // Tạo grid layout responsive cho ghế (không hàng dọc thẳng)
+    function initSeatGrid() {
+        let grid = document.getElementById('seatGrid');
+        // CSS grid cách đều các ghế
+        grid.style.display = 'grid';
+        grid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(45px, 1fr))';
+        grid.style.gap = '8px';
+        grid.style.justifyContent = 'center';
+        grid.style.padding = '0 20px';
+    }
+
+    // Gọi hàm init khi page load
+    document.addEventListener('DOMContentLoaded', initSeatGrid);
 
     // Bật/tắt chọn ghế
     function toggleSeat(el) {
-        if (el.classList.contains('booked')) return;  // Ghế đã đặt, không cho chọn
+        // Không cho chọn ghế đã đặt hoặc suất chiếu hết vé
+        if (el.classList.contains('booked') || isSoldOut) return;
 
         const id = el.dataset.id;
         const name = el.dataset.name;
@@ -91,17 +137,21 @@
         updateSummary();
     }
 
-    // Cập nhật tổng tiền và danh sách ghế chọn
+    // Cập nhật tóm tắt tổng tiền + danh sách ghế
     function updateSummary() {
-        document.getElementById('seatCount').textContent = selected.length;
-        document.getElementById('selectedNames').textContent =
-            selected.length > 0 ? selected.map(s => s.name).join(', ') : 'Chưa chọn';
+        const countEl = document.getElementById('seatCount');
+        const namesEl = document.getElementById('selectedNames');
+        const totalEl = document.getElementById('totalPrice');
+
+        countEl.textContent = selected.length;
+        namesEl.textContent = selected.length > 0
+            ? selected.map(s => s.name).join(', ')
+            : 'Chưa chọn';
 
         const total = selected.length * price;
-        document.getElementById('totalPrice').textContent =
-            'Tổng tiền: ' + total.toLocaleString('vi-VN') + ' VND';
+        totalEl.textContent = total.toLocaleString('vi-VN') + ' VND';
 
-        // Xóa input cũ, thêm mới vào form
+        // Thêm hidden input cho mỗi ghế đã chọn
         const container = document.getElementById('selectedSeatsInput');
         container.innerHTML = '';
         selected.forEach(s => {
@@ -113,7 +163,7 @@
         });
     }
 
-    // Kiểm tra trước khi submit
+    // Validate trước khi submit
     function validateSeats() {
         if (selected.length === 0) {
             alert('Vui lòng chọn ít nhất 1 ghế!');

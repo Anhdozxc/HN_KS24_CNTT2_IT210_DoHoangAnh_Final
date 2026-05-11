@@ -2,60 +2,93 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Lịch sử đặt vé</title>
+    <title>Lịch sử đặt vé - Cinema Booking</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
 <div th:replace="~{fragments/layout :: navbar}"></div>
 
 <div class="container">
-    <h1 style="margin-bottom:16px;">Lịch sử đặt vé của bạn</h1>
+    <h1 class="section-title">Lịch sử đặt vé của bạn</h1>
+    <p class="section-subtitle">Xem chi tiết các đơn hàng và quản lý vé của bạn</p>
 
+    <!-- Thông báo hủy vé thành công / lỗi -->
     <div class="alert alert-success" th:if="${param.success}">Đã hủy vé thành công!</div>
     <div class="alert alert-error" th:if="${param.error}" th:text="${param.error}"></div>
 
-    <div th:if="${#lists.isEmpty(bookings)}" style="color:#aaa;text-align:center;margin-top:40px;">
-        Bạn chưa đặt vé lần nào.
+    <!-- Thông báo nếu chưa đặt vé lần nào -->
+    <div th:if="${#lists.isEmpty(bookings)}" style="background: #1a1a2e; border-radius: 8px; padding: 40px; text-align: center; border: 1px solid #404050; color: #a0a0a0;">
+        <div style="font-size: 1.2rem; margin-bottom: 8px;">Chưa có lịch sử đặt vé</div>
+        <p style="margin-bottom: 20px;">Bạn chưa đặt vé lần nào. Hãy chọn phim và đặt vé ngay!</p>
+        <a href="/" class="btn btn-primary" style="padding: 10px 20px;">Chọn phim</a>
     </div>
 
-    <!-- Mỗi hóa đơn hiển 1 card -->
+    <!-- Danh sách lịch sử booking (card layout) -->
     <div th:each="b : ${bookings}"
-         style="background:#fff;border-radius:8px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.08);">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-            <div>
-                <div style="font-size:1.1rem;font-weight:bold;margin-bottom:6px;" th:text="${b.showtime.movie.title}"></div>
-                <div style="color:#666;font-size:0.9rem;">
-                    <span th:text="${b.showtime.room.name}"></span> |
-                    <span th:text="${#temporals.format(b.showtime.startTime, 'HH:mm dd/MM/yyyy')}"></span>
+         style="background: #1a1a2e; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: 1px solid #404050; transition: all 0.2s;"
+         onmouseover="this.style.borderColor='#4fa3d1'; this.style.boxShadow='0 6px 20px rgba(79,163,209,0.2)'"
+         onmouseout="this.style.borderColor='#404050'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)'">
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+            <!-- Thông tin bên trái -->
+            <div style="flex: 1;">
+                <!-- Tên phim (lớn, nổi bật) -->
+                <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 8px; color: #fff;"
+                     th:text="${b.showtime.movie.title}"></div>
+
+                <!-- Thông tin suất chiếu -->
+                <div style="color: #a0a0a0; font-size: 0.9rem; margin-bottom: 12px;">
+                    <span th:text="${b.showtime.room.name}"></span> •
+                    <span th:text="${#temporals.format(b.showtime.startTime, 'HH:mm - dd/MM/yyyy')}"></span>
                 </div>
-                <div style="margin-top:8px;color:#444;">
-                    <strong>Ghế:</strong>
-                    <span th:if="${#lists.isEmpty(b.tickets)}">Không còn ghế giữ chỗ</span>
-                    <span th:each="ticket, iter : ${b.tickets}">
-                        <span th:text="${ticket.seat.seatName}"></span><span th:if="${!iter.last}">, </span>
+
+                <!-- Danh sách ghế -->
+                <div style="margin-bottom: 8px;">
+                    <strong style="color: #e0e0e0;">Ghế: </strong>
+                    <span th:if="${#lists.isEmpty(b.tickets)}" style="color: #a0a0a0;">Không còn ghế giữ chỗ</span>
+                    <span th:unless="${#lists.isEmpty(b.tickets)}" style="color: #4fa3d1; font-weight: bold;">
+                        <span th:each="ticket, iter : ${b.tickets}">
+                            <span th:text="${ticket.seat.seatName}"></span><span th:if="${!iter.last}">, </span>
+                        </span>
                     </span>
                 </div>
-                <div style="color:#e94560;font-weight:bold;margin-top:6px;"
-                     th:text="${#numbers.formatDecimal(b.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VND'}"></div>
-                <div style="font-size:0.82rem;color:#999;margin-top:4px;"
-                     th:text="'Đặt lúc: ' + ${#temporals.format(b.bookedAt, 'HH:mm dd/MM/yyyy')}"></div>
-            </div>
-            <div style="text-align:right;">
-                <!-- Badge trạng thái -->
-                <span class="badge badge-confirmed" th:if="${b.status.name() == 'CONFIRMED'}">Đã xác nhận</span>
-                <span class="badge badge-cancelled" th:if="${b.status.name() == 'CANCELLED'}">Đã hủy</span>
-                <span class="badge badge-pending"   th:if="${b.status.name() == 'PENDING'}">Chờ xử lý</span>
 
-                <!-- CORE-09: Nút hủy vé (chỉ hiển khi CONFIRMED và chưa chiếu) -->
+                <!-- Tổng tiền -->
+                <div style="color: #ff6b6b; font-weight: bold; font-size: 1.1rem;"
+                     th:text="${#numbers.formatDecimal(b.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VND'}"></div>
+
+                <!-- Ngày đặt -->
+                <div style="font-size: 0.8rem; color: #707080; margin-top: 6px;"
+                     th:text="'Đặt lúc: ' + ${#temporals.format(b.bookedAt, 'HH:mm - dd/MM/yyyy')}"></div>
+            </div>
+
+            <!-- Trạng thái bên phải -->
+            <div style="text-align: right; display: flex; flex-direction: column; gap: 12px;">
+                <!-- Badge trạng thái -->
+                <div>
+                    <span class="badge badge-confirmed" th:if="${b.status.name() == 'CONFIRMED'}">Đã xác nhận</span>
+                    <span class="badge badge-cancelled" th:if="${b.status.name() == 'CANCELLED'}">Đã hủy</span>
+                    <span class="badge badge-pending" th:if="${b.status.name() == 'PENDING'}">Chờ xác nhận</span>
+                </div>
+
+                <!-- CORE-09: Nút hủy vé (chỉ show khi có thể hủy) -->
                 <form th:if="${cancellableBookingIds.contains(b.id)}"
                       th:action="@{/booking/cancel/{id}(id=${b.id})}"
-                      method="post" style="margin-top:8px;"
+                      method="post"
                       onsubmit="return confirm('Bạn có chắc chắn muốn hủy vé này?')">
-                    <button type="submit" class="btn btn-danger" style="font-size:0.85rem;padding:4px 10px;">Hủy vé</button>
+                    <button type="submit" class="btn btn-danger" style="padding: 8px 14px; font-size: 0.85rem;">Hủy vé</button>
                 </form>
-                <div th:if="${b.status.name() == 'CONFIRMED' and !cancellableBookingIds.contains(b.id)}"
-                     style="margin-top:8px;font-size:0.82rem;color:#999;">
-                    Đã quá hạn hủy vé trước 24 giờ.
+
+                <!-- Thông báo hết hạn hủy -->
+                <div th:if="${b.status.name() == 'CONFIRMED' && !cancellableBookingIds.contains(b.id)}"
+                     style="font-size: 0.8rem; color: #a0a0a0; padding: 8px 0;">
+                    Hết hạn hủy (quá 24h)
+                </div>
+
+                <!-- Thông báo chờ staff -->
+                <div th:if="${b.status.name() == 'PENDING'}"
+                     style="font-size: 0.8rem; color: #ffc107; padding: 8px 0;">
+                    Chờ xác nhận
                 </div>
             </div>
         </div>

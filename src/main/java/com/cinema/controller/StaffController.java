@@ -24,16 +24,23 @@ public class StaffController {
         return "staff/orders";
     }
 
-    // Tra cuu don theo booking ID
+    // Tra cuu don theo booking ID (handle empty input gracefully)
     @GetMapping("/orders/search")
-    public String searchOrder(@RequestParam Long bookingId, Model model) {
+    public String searchOrder(@RequestParam(required = false) Long bookingId, Model model) {
+        // Kiem tra bookingId co rong khong
+        if (bookingId == null) {
+            model.addAttribute("info", "Vui lòng nhập mã booking để tìm kiếm");
+            return "staff/orders";
+        }
+
+        // Tim booking theo id
         bookingRepository.findByIdWithDetails(bookingId).ifPresentOrElse(
                 booking -> {
                     List<Ticket> tickets = bookingService.getTicketsByBooking(bookingId);
                     model.addAttribute("booking", booking);
                     model.addAttribute("tickets", tickets);
                 },
-                () -> model.addAttribute("error", "Khong tim thay don hang so " + bookingId)
+                () -> model.addAttribute("error", "Không tìm thấy đơn hàng số " + bookingId)
         );
         return "staff/orders";
     }

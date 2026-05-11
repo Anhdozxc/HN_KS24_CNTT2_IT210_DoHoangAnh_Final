@@ -2,39 +2,56 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Đặt vé thành công</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Đặt vé thành công - Cinema Booking</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
 <div th:replace="~{fragments/layout :: navbar}"></div>
 
-<div class="container" style="max-width:600px;">
-    <div style="background:#fff;padding:30px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.1);text-align:center;">
-        <div style="font-size:3rem;margin-bottom:10px;">Đặt vé thành công!</div>
-        <h2 style="margin-bottom:20px;color:#007700;">Mã đơn hàng #<span th:text="${booking.id}"></span></h2>
+<div class="container" style="max-width: 600px;">
+    <div style="background: #1a1a2e; padding: 40px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); text-align: center; border: 1px solid #404050;">
+        <!-- Success Message -->
+        <h1 style="font-size: 2rem; color: #33cc33; margin-bottom: 8px;">Đặt vé thành công</h1>
+        <p style="color: #a0a0a0; margin-bottom: 24px;">Mã đơn hàng của bạn</p>
 
-        <!-- Thông tin suất chiếu -->
-        <div style="text-align:left;background:#f9f9f9;padding:16px;border-radius:6px;margin-bottom:20px;">
-            <p><strong>Phim:</strong> <span th:text="${booking.showtime.movie.title}"></span></p>
-            <p><strong>Phòng:</strong> <span th:text="${booking.showtime.room.name}"></span></p>
-            <p><strong>Giờ chiếu:</strong>
-                <span th:text="${#temporals.format(booking.showtime.startTime, 'HH:mm dd/MM/yyyy')}"></span>
-            </p>
-            <p style="margin-top:8px;"><strong>Ghế:</strong>
-                <!-- Lặp danh sách vé để hiển tên ghế -->
-                <span th:each="t, iter : ${tickets}">
-                    <span th:text="${t.seat.seatName}"></span><span th:if="${!iter.last}">, </span>
-                </span>
-            </p>
-            <p style="margin-top:8px;font-size:1.1rem;color:#e94560;">
-                <strong>Tổng tiền: </strong>
-                <span th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VND'}"></span>
-            </p>
+        <!-- Mã đơn hàng nổi bật -->
+        <div style="background: #16213e; padding: 16px 24px; border-radius: 8px; margin-bottom: 24px; border: 2px solid #4fa3d1;">
+            <div style="color: #a0a0a0; font-size: 0.9rem; margin-bottom: 4px;">Booking ID</div>
+            <div style="font-size: 1.8rem; font-weight: bold; color: #4fa3d1; font-family: monospace;" th:text="${booking.id}"></div>
         </div>
 
-        <div style="display:flex;gap:12px;justify-content:center;">
-            <a href="/booking/history" class="btn btn-secondary">Xem lịch sử đặt vé</a>
-            <a href="/" class="btn btn-primary">Về trang chủ</a>
+        <!-- Thông tin chi tiết suất chiếu -->
+        <div style="text-align: left; background: #16213e; padding: 20px; border-radius: 8px; margin-bottom: 24px; border: 1px solid #404050;">
+            <h3 style="color: #fff; margin-bottom: 12px;">Thông tin đặt vé</h3>
+
+            <div style="display: grid; grid-template-columns: 120px 1fr; gap: 12px;">
+                <div style="color: #a0a0a0; font-weight: 500;">Phim:</div>
+                <div style="color: #e0e0e0;" th:text="${booking.showtime.movie.title}"></div>
+
+                <div style="color: #a0a0a0; font-weight: 500;">Phòng:</div>
+                <div style="color: #e0e0e0;" th:text="${booking.showtime.room.name}"></div>
+
+                <div style="color: #a0a0a0; font-weight: 500;">Giờ chiếu:</div>
+                <div style="color: #e0e0e0;" th:text="${#temporals.format(booking.showtime.startTime, 'HH:mm - dd/MM/yyyy')}"></div>
+
+                <div style="color: #a0a0a0; font-weight: 500;">Ghế:</div>
+                <div style="color: #4fa3d1; font-weight: bold;">
+                    <span th:each="t, iter : ${tickets}">
+                        <span th:text="${t.seat.seatName}"></span><span th:if="${!iter.last}">, </span>
+                    </span>
+                </div>
+
+                <div style="color: #a0a0a0; font-weight: 500;">Tổng tiền:</div>
+                <div style="font-size: 1.2rem; font-weight: bold; color: #ff6b6b;"
+                     th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VND'}"></div>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            <a href="/booking/history" class="btn btn-secondary" style="padding: 12px 24px;">Lịch sử đặt vé</a>
+            <a href="/" class="btn btn-primary" style="padding: 12px 24px;">Trang chủ</a>
         </div>
     </div>
 </div>
